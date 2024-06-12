@@ -22,10 +22,10 @@ pip install requests python-dateutil
 - Configuration: Update the LOCATION_DETAILS dictionary in the script to include the location IDs and names for which you want to check appointments.
 
 ## Configuration Variables
-`API_URL_TEMPLATE`: URL template for the API endpoint.
-`LOCATION_DETAILS`: Dictionary mapping location IDs to their names.
-`CHECK_INTERVAL`: Time interval (in seconds) between checks when no errors occur.
-`ERROR_INTERVAL`: Time interval (in seconds) between checks when an error occurs.
+- `API_URL_TEMPLATE`: URL template for the API endpoint.
+- `LOCATION_DETAILS`: Dictionary mapping location IDs to their names.
+- `CHECK_INTERVAL`: Time interval (in seconds) between checks when no errors occur.
+- `ERROR_INTERVAL`: Time interval (in seconds) between checks when an error occurs.
 
 ## Running the Script
 To run the script, simply execute it from the command line:
