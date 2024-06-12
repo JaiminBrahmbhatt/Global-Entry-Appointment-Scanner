@@ -88,12 +88,17 @@ def process_appointments(location_id: int, city_name: str) -> bool:
     return False
 
 def main() -> None:
-    print("⏰ Checking for appointments...")
-    while True:
-        errors: List[bool] = [process_appointments(loc_id, city) for loc_id, city in LOCATION_DETAILS.items()]
+    """Main function to run the script."""
+    try:
+      print("⏰ Checking for appointments...")
+      while True:
+          errors: List[bool] = [process_appointments(loc_id, city) for loc_id, city in LOCATION_DETAILS.items()]
 
-        print("⏰ Waiting for {} seconds before next check...".format(ERROR_INTERVAL if any(errors) else CHECK_INTERVAL))
-        time.sleep(ERROR_INTERVAL if any(errors) else CHECK_INTERVAL)
+          print("⏰ Waiting for {} seconds before next check...".format(ERROR_INTERVAL if any(errors) else CHECK_INTERVAL))
+          time.sleep(ERROR_INTERVAL if any(errors) else CHECK_INTERVAL)
+    except KeyboardInterrupt:
+        print("🛑 Exiting...")
+        sys.exit(0)
 
 if __name__ == "__main__":
     main()
