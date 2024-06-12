@@ -1,17 +1,16 @@
 # Global-Entry-Appointment-Scanner
-Simple python script that scans for next available appointment for global entry
 
-# Prerequistics 
-1. Finding the location Id of your location
-2. Go to - https://ttp.cbp.dhs.gov/schedulerapi/locations and look for nearest airports and fetch the "id"
-3. Locally installed python dev environment
+## Overview
+This Python script automatically checks for available appointments at specified locations and notifies the user when new appointments are available for global entry / NEXUS locations. 
 
-# How to run
-1. If you want to get text messages for when the appointment is available use Twillio API to send yourself SMS
-2. If you have time to look at your screen just run it locally while commenting out twillio api code
-3. All the packages used are inbuilt so you will just need python dev environment that run the code for you
+The script fetches appointment data from an API, processes the data to find new available slots, and sends notifications to the user. It is set up to check for appointments every 15 minutes, but this interval can be adjusted as needed.
 
-Thank you to these two amazing folks for the inspiration - 
+## Prerequisites
+Before running the script, ensure you have the following installed:
+- Python 3.6 or higher
+- `requests` library
+- `python-dateutil` library
 
-- https://gist.github.com/serg06/ac46defe2d9f568ac39665bd50d2e1b1
-- https://gist.github.com/clay584/bcbbe3803ca6414ce09426a2c3d4abfb
+You can install the required Python libraries using pip:
+```bash
+pip install requests python-dateutil
