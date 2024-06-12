@@ -42,3 +42,7 @@ To enable SMS notifications, uncomment the Twilio client creation and message se
 - `auth_token`
 - to (recipient phone number)
 - from_ (Twilio phone number)
+
+##  Thank you to these two amazing folks for the inspiration
+- https://gist.github.com/serg06/ac46defe2d9f568ac39665bd50d2e1b1
+- https://gist.github.com/clay584/bcbbe3803ca6414ce09426a2c3d4abfb
