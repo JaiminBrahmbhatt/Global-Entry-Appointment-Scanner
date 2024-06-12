@@ -14,6 +14,7 @@ Before running the script, ensure you have the following installed:
 You can install the required Python libraries using pip:
 ```bash
 pip install requests python-dateutil
+```
 
 ## Setup
 - Twilio Account: The script uses Twilio to send SMS notifications. You need to create a Twilio account and get your account_sid and auth_token. You also need a Twilio phone number to send SMS messages.
@@ -31,6 +32,7 @@ To run the script, simply execute it from the command line:
 
 ```bash
 python appointment_scanner.py
+```
 
 The script will continuously check for new appointments and print updates to the console. If a new appointment is found, it will send an SMS notification.
 
