@@ -9,7 +9,9 @@ from typing import Dict, List, Optional, NoReturn
 from cachetools import cached, TTLCache
 
 # Cache configuration: maxsize is the maximum number of items in the cache, ttl is the time to live in seconds
-cache = TTLCache(maxsize=100, ttl=15 * 24 * 60 * 60)  # 15 days
+CACHE_MAXSIZE = 100
+CACHE_TTL = 15 * 24 * 60 * 60  # 15 days
+cache = TTLCache(maxsize=CACHE_MAXSIZE, ttl=CACHE_TTL)
 
 # API parameters
 LIMIT = 5
@@ -18,7 +20,56 @@ MINIMUM = 1
 API_URL_TEMPLATE = 'https://ttp.cbp.dhs.gov/schedulerapi/slots?orderBy=soonest&limit={}&locationId={}&minimum={}'
 CHECK_INTERVAL = 60 * 15  # 15 minutes
 ERROR_INTERVAL = 60  # 1 minute
+
 appointment_history: Dict[int, List[str]] = {}
+
+@cached(cache)
+def fetch_locations() -> Dict[str, Dict[str, str]]:
+    """Fetches location data from the API and organizes it by city."""
+    url = "https://ttp.cbp.dhs.gov/schedulerapi/locations/?temporary=false&inviteOnly=false&operational=true&serviceName=Global%20Entry"
+    try:
+        response = requests.get(url)
+        response.raise_for_status()
+        return {loc['city'].strip().lower(): loc for loc in response.json()}
+    except requests.RequestException as err:
+        print(f"HTTP error occurred: {err}")
+        return {}
+
+def fetch_appointments(location_id: int) -> Optional[List[Dict[str, str]]]:
+    """Fetches the earliest available appointments for a given location."""
+    try:
+        response = requests.get(API_URL_TEMPLATE.format(LIMIT, location_id, MINIMUM), timeout=10)
+        response.raise_for_status()
+        return response.json()
+    except requests.RequestException as error:
+        notify(f"Error for location ID {location_id}: {error}")
+        return None
+
+def process_appointments(location_id: int, city_name: str) -> bool:
+    """Processes appointments for a specific location."""
+    appointments = fetch_appointments(location_id)
+    if not appointments:
+        print(f"🚫 No appointments found in {city_name}.")
+        return True
+
+    if location_id not in appointment_history:
+        appointment_history[location_id] = []
+
+    current_year = datetime.datetime.now().year
+    for appointment in appointments:
+        formatted_start = format_timestamp(appointment['startTimestamp'])
+        if formatted_start not in appointment_history[location_id] and str(current_year) in formatted_start:
+            notify(f"New appointment available on {formatted_start} in {city_name}")
+            heapq.heappush(appointment_history[location_id], formatted_start)
+    
+    print(f"📅 Updated appointments for {city_name}: {sorted(appointment_history[location_id])}")
+    return False
+
+# Notification Options
+def notify(message: str) -> None:
+    """Notify based on the preferred method"""
+    print(f"🔔 Notification: {message}")
+    twilio_sms_notify(message)
 
 def twilio_sms_notify(message: str) -> NoReturn:
     """
@@ -46,62 +97,16 @@ def twilio_sms_notify(message: str) -> NoReturn:
     except Exception as e:
         print(f"Failed to send message: {e}")
 
-@cached(cache)
-def fetch_locations() -> Dict[str, Dict[str, str]]:
-    """Fetches location data from the API and organizes it by city."""
-    url = "https://ttp.cbp.dhs.gov/schedulerapi/locations/?temporary=false&inviteOnly=false&operational=true&serviceName=Global%20Entry"
-    try:
-        response = requests.get(url)
-        response.raise_for_status()
-        return {loc['city'].strip().lower(): loc for loc in response.json()}
-    except requests.RequestException as err:
-        print(f"HTTP error occurred: {err}")
-        return {}
-
-def lookup_by_city(locations_by_city: Dict[str, Dict[str, str]], city: str) -> Optional[Dict[int, str]]:
-    """Looks up location details by city name and returns a dictionary mapping ID to city."""
-    location_info = locations_by_city.get(city.lower())
-    return {int(location_info['id']): location_info['city']} if location_info else f"No location found for city: {city}"
-
-def notify(message: str) -> None:
-    """Notify based on the preferred method"""
-    print(f"🔔 Notification: {message}")
-    twilio_sms_notify(message)
-
-def fetch_appointments(location_id: int) -> Optional[List[Dict[str, str]]]:
-    """Fetches the earliest available appointments for a given location."""
-    try:
-        response = requests.get(API_URL_TEMPLATE.format(LIMIT, location_id, MINIMUM), timeout=10)
-        response.raise_for_status()
-        return response.json()
-    except requests.RequestException as error:
-        notify(f"Error for location ID {location_id}: {error}")
-        return None
-
+# Utility Functions
 def format_timestamp(timestamp: str) -> str:
     """Formats the ISO 8601 timestamp into a more readable format and converts it to CST."""
     cst_time = parser.parse(timestamp).astimezone(gettz('America/Chicago'))
     return cst_time.strftime('%Y-%m-%d %H:%M CST')
-
-def process_appointments(location_id: int, city_name: str) -> bool:
-    """Processes appointments for a specific location."""
-    appointments = fetch_appointments(location_id)
-    if not appointments:
-        print(f"🚫 No appointments found in {city_name}.")
-        return True
-
-    if location_id not in appointment_history:
-        appointment_history[location_id] = []
-
-    current_year = datetime.datetime.now().year
-    for appointment in appointments:
-        formatted_start = format_timestamp(appointment['startTimestamp'])
-        if formatted_start not in appointment_history[location_id] and str(current_year) in formatted_start:
-            notify(f"New appointment available on {formatted_start} in {city_name}")
-            heapq.heappush(appointment_history[location_id], formatted_start)
     
-    print(f"📅 Updated appointments for {city_name}: {sorted(appointment_history[location_id])}")
-    return False
+def lookup_by_city(locations_by_city: Dict[str, Dict[str, str]], city: str) -> Optional[Dict[int, str]]:
+    """Looks up location details by city name and returns a dictionary mapping ID to city."""
+    location_info = locations_by_city.get(city.lower())
+    return {int(location_info['id']): location_info['city']} if location_info else f"No location found for city: {city}"
 
 def main():
     locations_by_city = fetch_locations()
