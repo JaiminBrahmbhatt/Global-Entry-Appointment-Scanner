@@ -17,7 +17,8 @@ cache = TTLCache(maxsize=CACHE_MAXSIZE, ttl=CACHE_TTL)
 LIMIT = 5
 MINIMUM = 1
 
-API_URL_TEMPLATE = 'https://ttp.cbp.dhs.gov/schedulerapi/slots?orderBy=soonest&limit={}&locationId={}&minimum={}'
+APPOINTMENTS_API_URL = 'https://ttp.cbp.dhs.gov/schedulerapi/slots?orderBy=soonest&limit={}&locationId={}&minimum={}'
+LOCATIONS_API_URL = 'https://ttp.cbp.dhs.gov/schedulerapi/locations/?temporary=false&inviteOnly=false&operational=true&serviceName=Global%20Entry'
 CHECK_INTERVAL = 60 * 15  # 15 minutes
 ERROR_INTERVAL = 60  # 1 minute
 
@@ -26,9 +27,8 @@ appointment_history: Dict[int, List[str]] = {}
 @cached(cache)
 def fetch_locations() -> Dict[str, Dict[str, str]]:
     """Fetches location data from the API and organizes it by city."""
-    url = "https://ttp.cbp.dhs.gov/schedulerapi/locations/?temporary=false&inviteOnly=false&operational=true&serviceName=Global%20Entry"
     try:
-        response = requests.get(url)
+        response = requests.get(LOCATIONS_API_URL)
         response.raise_for_status()
         return {loc['city'].strip().lower(): loc for loc in response.json()}
     except requests.RequestException as err:
@@ -38,7 +38,7 @@ def fetch_locations() -> Dict[str, Dict[str, str]]:
 def fetch_appointments(location_id: int) -> Optional[List[Dict[str, str]]]:
     """Fetches the earliest available appointments for a given location."""
     try:
-        response = requests.get(API_URL_TEMPLATE.format(LIMIT, location_id, MINIMUM), timeout=10)
+        response = requests.get(APPOINTMENTS_API_URL.format(LIMIT, location_id, MINIMUM), timeout=10)
         response.raise_for_status()
         return response.json()
     except requests.RequestException as error:
