@@ -1,15 +1,19 @@
-import requests
-from twilio.rest import Client
+"""
+This module provides functionality to scan for available appointments using specific APIs,
+send notifications via email or SMS, and manage appointment data.
+"""
+import os
 import time
-from dateutil import parser
-from dateutil.tz import gettz
 import datetime
 import heapq
-from typing import Dict, List, Optional, NoReturn
-from cachetools import cached, TTLCache
 import smtplib
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
+import requests
+from dateutil import parser
+from dateutil.tz import gettz
+from typing import Dict, List, Optional, NoReturn
+from cachetools import cached, TTLCache
 
 # Cache configuration: maxsize is the maximum number of items in the cache, ttl is the time to live in seconds
 CACHE_MAXSIZE = 100
