@@ -43,7 +43,7 @@ appointment_history: Dict[int, List[str]] = {}
 def fetch_locations() -> Dict[str, Dict[str, str]]:
     """Fetches location data from the API and organizes it by city."""
     try:
-        response = requests.get(LOCATIONS_API_URL)
+        response = requests.get(LOCATIONS_API_URL, timeout=10)
         response.raise_for_status()
         return {loc['city'].strip().lower(): loc for loc in response.json()}
     except requests.RequestException as err:
