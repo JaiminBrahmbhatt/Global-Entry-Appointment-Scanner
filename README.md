@@ -8,6 +8,10 @@ The script fetches appointment data from an API, processes the data to find new 
 ## Build Status
 [![Pylint](https://github.com/JaiminBrahmbhatt/Global-Entry-Appointment-Scanner/actions/workflows/pylint.yml/badge.svg)](https://github.com/JaiminBrahmbhatt/Global-Entry-Appointment-Scanner/actions/workflows/pylint.yml)
 
+[![CodeQL](https://github.com/JaiminBrahmbhatt/Global-Entry-Appointment-Scanner/actions/workflows/codeql.yml/badge.svg)](https://github.com/JaiminBrahmbhatt/Global-Entry-Appointment-Scanner/actions/workflows/codeql.yml)
+
+
+
 ## Prerequisites
 Before running the script, ensure you have the following installed:
 - Python 3.6 or higher
@@ -16,7 +20,7 @@ Before running the script, ensure you have the following installed:
 
 You can install the required Python libraries using pip:
 ```bash
-pip install requests python-dateutil
+pip install requirements.txt
 ```
 
 ## Setup
