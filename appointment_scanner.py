@@ -14,6 +14,7 @@ from dateutil import parser
 from dateutil.tz import gettz
 from typing import Dict, List, Optional, NoReturn
 from cachetools import cached, TTLCache
+from twilio.rest import Client
 
 # Cache configuration: maxsize is the maximum number of items in the cache, ttl is the time to live in seconds
 CACHE_MAXSIZE = 100
