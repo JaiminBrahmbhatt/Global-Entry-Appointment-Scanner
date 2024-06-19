@@ -7,12 +7,12 @@ import time
 import datetime
 import heapq
 import smtplib
+from typing import Dict, List, Optional, NoReturn
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 import requests
 from dateutil import parser
 from dateutil.tz import gettz
-from typing import Dict, List, Optional, NoReturn
 from cachetools import cached, TTLCache
 from twilio.rest import Client
 
