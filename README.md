@@ -5,6 +5,9 @@ This Python script automatically checks for available appointments at specified 
 
 The script fetches appointment data from an API, processes the data to find new available slots, and sends notifications to the user. It is set up to check for appointments every 15 minutes, but this interval can be adjusted as needed.
 
+## Build Status
+[![Pylint](https://github.com/JaiminBrahmbhatt/Global-Entry-Appointment-Scanner/actions/workflows/pylint.yml/badge.svg)](https://github.com/JaiminBrahmbhatt/Global-Entry-Appointment-Scanner/actions/workflows/pylint.yml)
+
 ## Prerequisites
 Before running the script, ensure you have the following installed:
 - Python 3.6 or higher
