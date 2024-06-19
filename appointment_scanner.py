@@ -11,7 +11,7 @@ from cachetools import cached, TTLCache
 # Cache configuration: maxsize is the maximum number of items in the cache, ttl is the time to live in seconds
 CACHE_MAXSIZE = 100
 CACHE_TTL = 15 * 24 * 60 * 60  # 15 days
-cache = TTLCache(maxsize=CACHE_MAXSIZE, ttl=CACHE_TTL)
+CACHE = TTLCache(maxsize=CACHE_MAXSIZE, ttl=CACHE_TTL)
 
 # API parameters
 LIMIT = 5
@@ -24,7 +24,7 @@ ERROR_INTERVAL = 60  # 1 minute
 
 appointment_history: Dict[int, List[str]] = {}
 
-@cached(cache)
+@cached(CACHE)
 def fetch_locations() -> Dict[str, Dict[str, str]]:
     """Fetches location data from the API and organizes it by city."""
     try:
