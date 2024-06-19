@@ -77,7 +77,6 @@ def process_appointments(location_id: int, city_name: str) -> bool:
         if formatted_start not in appointment_history[location_id] and str(current_year) in formatted_start:
             notify(f"New appointment available on {formatted_start} in {city_name}")
             heapq.heappush(appointment_history[location_id], formatted_start)
-    
     print(f"📅 Updated appointments for {city_name}: {sorted(appointment_history[location_id])}")
     return False
 
