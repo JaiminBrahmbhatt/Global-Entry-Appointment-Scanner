@@ -1,5 +1,5 @@
 import requests
-# from twilio.rest import Client
+from twilio.rest import Client
 import time
 from dateutil import parser
 from dateutil.tz import gettz
@@ -80,8 +80,29 @@ def process_appointments(location_id: int, city_name: str) -> bool:
 def notify(message: str) -> None:
     """Notify based on the preferred method"""
     print(f"🔔 Notification: {message}")
-    # send_sms_notification(message)
+    send_sms_notification(message)
     send_email_notification("Appointment Available", message)
+
+def send_email_notification(subject: str, message: str) -> None:
+    """
+    Sends an email notification.
+    """
+    # Create MIME multipart message
+    msg = MIMEMultipart()
+    msg['From'] = FROM_EMAIL
+    msg['To'] = TO_EMAIL
+    msg['Subject'] = subject
+    msg.attach(MIMEText(message, 'plain'))
+    try:
+        # Connect to the SMTP server and send the email
+        server = smtplib.SMTP(SMTP_SERVER, SMTP_PORT)
+        server.starttls()  # Secure the connection
+        server.login(FROM_EMAIL, PASSWORD)
+        server.send_message(msg)
+        server.quit()
+        print("Email sent successfully!")
+    except Exception as e:
+        print(f"Failed to send email: {e}")
 
 def send_sms_notification(message: str) -> NoReturn:
     """
@@ -108,27 +129,6 @@ def send_sms_notification(message: str) -> NoReturn:
         print("Message sent successfully!")
     except Exception as e:
         print(f"Failed to send message: {e}")
-
-def send_email_notification(subject: str, message: str) -> None:
-    """
-    Sends an email notification.
-    """
-    # Create MIME multipart message
-    msg = MIMEMultipart()
-    msg['From'] = FROM_EMAIL
-    msg['To'] = TO_EMAIL
-    msg['Subject'] = subject
-    msg.attach(MIMEText(message, 'plain'))
-    try:
-        # Connect to the SMTP server and send the email
-        server = smtplib.SMTP(SMTP_SERVER, SMTP_PORT)
-        server.starttls()  # Secure the connection
-        server.login(FROM_EMAIL, PASSWORD)
-        server.send_message(msg)
-        server.quit()
-        print("Email sent successfully!")
-    except Exception as e:
-        print(f"Failed to send email: {e}")
 
 # Utility Functions
 def format_timestamp(timestamp: str) -> str:
