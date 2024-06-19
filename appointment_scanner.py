@@ -1,5 +1,5 @@
 """
-This module provides functionality to scan for available appointments using specific APIs,
+Scan for available appointments using specific APIs,
 send notifications via email or SMS, and manage appointment data.
 """
 import time
