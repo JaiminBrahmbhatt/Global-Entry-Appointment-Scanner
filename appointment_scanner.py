@@ -1,5 +1,5 @@
 import requests
-from twilio.rest import Client
+# from twilio.rest import Client
 import time
 from dateutil import parser
 from dateutil.tz import gettz
@@ -7,6 +7,9 @@ import datetime
 import heapq
 from typing import Dict, List, Optional, NoReturn
 from cachetools import cached, TTLCache
+import smtplib
+from email.mime.text import MIMEText
+from email.mime.multipart import MIMEMultipart
 
 # Cache configuration: maxsize is the maximum number of items in the cache, ttl is the time to live in seconds
 CACHE_MAXSIZE = 100
@@ -16,11 +19,19 @@ CACHE = TTLCache(maxsize=CACHE_MAXSIZE, ttl=CACHE_TTL)
 # API parameters
 LIMIT = 5
 MINIMUM = 1
-
 APPOINTMENTS_API_URL = 'https://ttp.cbp.dhs.gov/schedulerapi/slots?orderBy=soonest&limit={}&locationId={}&minimum={}'
 LOCATIONS_API_URL = 'https://ttp.cbp.dhs.gov/schedulerapi/locations/?temporary=false&inviteOnly=false&operational=true&serviceName=Global%20Entry'
+
+# Check Interval
 CHECK_INTERVAL = 60 * 15  # 15 minutes
 ERROR_INTERVAL = 60  # 1 minute
+
+# EMAIL configuration
+SMTP_SERVER = 'smtp.gmail.com'  # SMTP server for Gmail
+SMTP_PORT = 587
+FROM_EMAIL = ''  # Sender's email address
+TO_EMAIL = ''  # Recipient's email address
+PASSWORD = ''  # Sender's email password
 
 appointment_history: Dict[int, List[str]] = {}
 
@@ -69,9 +80,10 @@ def process_appointments(location_id: int, city_name: str) -> bool:
 def notify(message: str) -> None:
     """Notify based on the preferred method"""
     print(f"🔔 Notification: {message}")
-    twilio_sms_notify(message)
+    # send_sms_notification(message)
+    send_email_notification("Appointment Available", message)
 
-def twilio_sms_notify(message: str) -> NoReturn:
+def send_sms_notification(message: str) -> NoReturn:
     """
     Sends an SMS message using Twilio's service.
     Args:
@@ -96,6 +108,27 @@ def twilio_sms_notify(message: str) -> NoReturn:
         print("Message sent successfully!")
     except Exception as e:
         print(f"Failed to send message: {e}")
+
+def send_email_notification(subject: str, message: str) -> None:
+    """
+    Sends an email notification.
+    """
+    # Create MIME multipart message
+    msg = MIMEMultipart()
+    msg['From'] = FROM_EMAIL
+    msg['To'] = TO_EMAIL
+    msg['Subject'] = subject
+    msg.attach(MIMEText(message, 'plain'))
+    try:
+        # Connect to the SMTP server and send the email
+        server = smtplib.SMTP(SMTP_SERVER, SMTP_PORT)
+        server.starttls()  # Secure the connection
+        server.login(FROM_EMAIL, PASSWORD)
+        server.send_message(msg)
+        server.quit()
+        print("Email sent successfully!")
+    except Exception as e:
+        print(f"Failed to send email: {e}")
 
 # Utility Functions
 def format_timestamp(timestamp: str) -> str:
