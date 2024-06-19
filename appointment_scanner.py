@@ -2,7 +2,6 @@
 This module provides functionality to scan for available appointments using specific APIs,
 send notifications via email or SMS, and manage appointment data.
 """
-import os
 import time
 import datetime
 import heapq
@@ -139,7 +138,6 @@ def format_timestamp(timestamp: str) -> str:
     """Formats the ISO 8601 timestamp into a more readable format and converts it to CST."""
     cst_time = parser.parse(timestamp).astimezone(gettz('America/Chicago'))
     return cst_time.strftime('%Y-%m-%d %H:%M CST')
-    
 def lookup_by_city(locations_by_city: Dict[str, Dict[str, str]], city: str) -> Optional[Dict[int, str]]:
     """Looks up location details by city name and returns a dictionary mapping ID to city."""
     location_info = locations_by_city.get(city.lower())
