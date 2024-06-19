@@ -1,5 +1,5 @@
 import requests
-# from twilio.rest import Client
+from twilio.rest import Client
 import time
 from dateutil import parser
 from dateutil.tz import gettz
@@ -66,7 +66,7 @@ def lookup_by_city(locations_by_city: Dict[str, Dict[str, str]], city: str) -> O
 def notify(message: str) -> None:
     """Notify based on the preferred method"""
     print(f"🔔 Notification: {message}")
-    # twilio_sms_notify(message)
+    twilio_sms_notify(message)
 
 def fetch_appointments(location_id: int) -> Optional[List[Dict[str, str]]]:
     """Fetches the earliest available appointments for a given location."""
