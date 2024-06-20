@@ -5,6 +5,7 @@ send notifications via email or SMS, and manage appointment data.
 
 import logging
 import os
+import sys
 import time
 import datetime
 import heapq
@@ -208,6 +209,9 @@ def main() -> NoReturn:
     }
 
     logger.info("Location Details : %s", location_details)
+    if not location_details:
+        logger.error("No locations found!")
+        sys.exit(-1)
     logger.info("⏰ Checking for appointments...")
 
     while True:
