@@ -77,10 +77,10 @@ def fetch_locations() -> Dict[str, Dict[str, str]]:
         response.raise_for_status()
         return {loc["city"].strip().lower(): loc for loc in response.json()}
     except requests.RequestException as err:
-        logger.error("Error fetching locations from API", err=err)
+        logger.error("Error fetching locations from API - %s", err)
         return {}
     except TimeoutError as err:
-        logger.error("Timeout fetching locations from API", err=err)
+        logger.error("Timeout fetching locations from API - %s", err)
         return {}
 
 
@@ -120,9 +120,9 @@ def process_appointments(location_id: int, city_name: str) -> bool:
             notify(f"New appointment available on {formatted_start} in {city_name}")
             heapq.heappush(appointment_history[location_id], formatted_start)
     logger.info(
-        "Updated appointments for %s",
+        "Updated appointments for %s - %s",
         city_name,
-        message=sorted(appointment_history[location_id]),
+        sorted(appointment_history[location_id]),
     )
     return False
 
@@ -130,7 +130,7 @@ def process_appointments(location_id: int, city_name: str) -> bool:
 # Notification Options
 def notify(message: str) -> None:
     """Notify based on the preferred method"""
-    logger.info("🔔 Notification", message=message)
+    logger.info("🔔 Notification : %s", message)
     # send_sms_notification(message)
     send_email_notification("Appointment Available", message)
 
@@ -171,8 +171,8 @@ def send_sms_notification(message: str) -> NoReturn:
         # Send the SMS
         client.messages.create(to=TO_NUMBER, from_=FROM_NUMBER, body=message)
         logger.info("SMS sent successfully!")
-    except TwilioRestException as e:
-        logger.error("Error sending SMS:", error=e)
+    except TwilioRestException as err:
+        logger.error("Error sending SMS: %s", err)
 
 
 # Utility Functions
@@ -219,7 +219,7 @@ def main() -> NoReturn:
             process_appointments(loc_id, city)
             for loc_id, city in location_details.items()
         ]
-        logger.warning(
+        logger.info(
             "⏰ Waiting for %s seconds before next check...",
             ERROR_INTERVAL if any(errors) else CHECK_INTERVAL,
         )
