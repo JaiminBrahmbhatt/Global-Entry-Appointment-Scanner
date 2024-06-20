@@ -18,7 +18,7 @@ Before running the script, ensure you have the following installed:
 
 You can install the required Python libraries using pip:
 ```bash
-pip install requirements.txt
+pip install -r requirements.txt
 ```
 
 ## Setup
