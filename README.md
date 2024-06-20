@@ -15,8 +15,6 @@ The script fetches appointment data from an API, processes the data to find new 
 ## Prerequisites
 Before running the script, ensure you have the following installed:
 - Python 3.6 or higher
-- `requests` library
-- `python-dateutil` library
 
 You can install the required Python libraries using pip:
 ```bash
