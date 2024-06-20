@@ -53,8 +53,13 @@ FROM_EMAIL = os.getenv('FROM_EMAIL')
 TO_EMAIL = os.getenv('TO_EMAIL')
 PASSWORD = os.getenv('PASSWORD')
 
-appointment_history: Dict[int, List[str]] = {}
+# Twilio credentials and phone numbers
+ACCOUNT_SID = os.getenv('ACCOUNT_SID') # Replace with your Twilio Account SID
+AUTH_TOKEN = os.getenv('AUTH_TOKEN')  # Replace with your Twilio Auth Token
+TO_NUMBER = os.getenv('TO_NUMBER')  # Replace with the recipient's phone number
+FROM_NUMBER = os.getenv('FROM_NUMBER')  # Replace with your Twilio phone number
 
+appointment_history: Dict[int, List[str]] = {}
 
 @cached(CACHE)
 def fetch_locations() -> Dict[str, Dict[str, str]]:
@@ -144,16 +149,11 @@ def send_sms_notification(message: str) -> NoReturn:
     Returns:
     NoReturn
     """
-    # Twilio credentials and phone numbers
-    account_sid = "your_account_sid_here"  # Replace with your Twilio Account SID
-    auth_token = "your_auth_token_here"  # Replace with your Twilio Auth Token
-    to_number = "recipient_phone_number"  # Replace with the recipient's phone number
-    from_number = "your_twilio_phone_number"  # Replace with your Twilio phone number
     try:
         # Create the Twilio client
-        client = Client(account_sid, auth_token)
+        client = Client(ACCOUNT_SID, AUTH_TOKEN)
         # Send the SMS
-        client.messages.create(to=to_number, from_=from_number, body=message)
+        client.messages.create(to=TO_NUMBER, from_=FROM_NUMBER, body=message)
         print("Message sent successfully!")
     except TwilioRestException as e:
         print(f"Failed to send message: {e}")
