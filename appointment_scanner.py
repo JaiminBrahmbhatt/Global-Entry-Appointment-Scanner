@@ -144,6 +144,7 @@ def lookup_by_city(locations_by_city: Dict[str, Dict[str, str]], city: str) -> O
     return {int(location_info['id']): location_info['city']} if location_info else f"No location found for city: {city}"
 
 def main():
+    """ Main function to run the scanner """
     locations_by_city = fetch_locations()
     print("Available cities:", ", ".join(sorted(locations_by_city.keys())).title())
     cities = input("Enter cities of interest (comma-separated): ").split(',')
@@ -154,7 +155,7 @@ def main():
 
     while True:
         errors = [process_appointments(loc_id, city) for loc_id, city in location_details.items()]
-        print("⏰ Waiting for {} seconds before next check...".format(ERROR_INTERVAL if any(errors) else CHECK_INTERVAL))
+        print(f"⏰ Waiting for {ERROR_INTERVAL if any(errors) else CHECK_INTERVAL} seconds before next check...")
         time.sleep(ERROR_INTERVAL if any(errors) else CHECK_INTERVAL)
 
 if __name__ == "__main__":
