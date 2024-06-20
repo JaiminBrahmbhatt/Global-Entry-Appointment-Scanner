@@ -177,7 +177,7 @@ def lookup_by_city(
     )
 
 
-def main():
+def main() -> NoReturn:
     """Main function to run the scanner"""
     locations_by_city = fetch_locations()
     print("Available cities:", ", ".join(sorted(locations_by_city.keys())).title())
