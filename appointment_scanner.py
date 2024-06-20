@@ -78,6 +78,9 @@ def fetch_locations() -> Dict[str, Dict[str, str]]:
     except requests.RequestException as err:
         logger.error("Error fetching locations from API", err=err)
         return {}
+    except TimeoutError as err:
+        logger.error("Timeout fetching locations from API", err=err)
+        return {}
 
 
 def fetch_appointments(location_id: int) -> Optional[List[Dict[str, str]]]:
@@ -88,8 +91,11 @@ def fetch_appointments(location_id: int) -> Optional[List[Dict[str, str]]]:
         )
         response.raise_for_status()
         return response.json()
-    except requests.RequestException as error:
-        logger.error("Error for location ID %s", location_id, error=error)
+    except requests.RequestException as err:
+        logger.error("Error for location ID %s - %s", location_id, err)
+        return None
+    except TimeoutError as err:
+        logger.error("Timeout error for location ID %s - %s", location_id, err)
         return None
 
 
