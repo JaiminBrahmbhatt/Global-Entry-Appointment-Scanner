@@ -3,6 +3,7 @@ Scan for available appointments using specific APIs,
 send notifications via email or SMS, and manage appointment data.
 """
 
+import logging
 import os
 import time
 import datetime
@@ -20,6 +21,11 @@ from cachetools import cached, TTLCache
 from twilio.rest import Client
 from twilio.base.exceptions import TwilioRestException
 
+# Set up the logger
+logging.basicConfig(
+    level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s"
+)
+logger = logging.getLogger()
 
 # Cache configuration:
 CACHE_MAXSIZE = 100  # maxsize is the maximum number of items in the cache
@@ -49,17 +55,18 @@ SMTP_PORT = 587
 
 # Email credentials
 dotenv.load_dotenv()
-FROM_EMAIL = os.getenv('FROM_EMAIL')
-TO_EMAIL = os.getenv('TO_EMAIL')
-PASSWORD = os.getenv('PASSWORD')
+FROM_EMAIL = os.getenv("FROM_EMAIL")
+TO_EMAIL = os.getenv("TO_EMAIL")
+PASSWORD = os.getenv("PASSWORD")
 
 # Twilio credentials and phone numbers
-ACCOUNT_SID = os.getenv('ACCOUNT_SID') # Replace with your Twilio Account SID
-AUTH_TOKEN = os.getenv('AUTH_TOKEN')  # Replace with your Twilio Auth Token
-TO_NUMBER = os.getenv('TO_NUMBER')  # Replace with the recipient's phone number
-FROM_NUMBER = os.getenv('FROM_NUMBER')  # Replace with your Twilio phone number
+ACCOUNT_SID = os.getenv("ACCOUNT_SID")  # Replace with your Twilio Account SID
+AUTH_TOKEN = os.getenv("AUTH_TOKEN")  # Replace with your Twilio Auth Token
+TO_NUMBER = os.getenv("TO_NUMBER")  # Replace with the recipient's phone number
+FROM_NUMBER = os.getenv("FROM_NUMBER")  # Replace with your Twilio phone number
 
 appointment_history: Dict[int, List[str]] = {}
+
 
 @cached(CACHE)
 def fetch_locations() -> Dict[str, Dict[str, str]]:
@@ -69,7 +76,7 @@ def fetch_locations() -> Dict[str, Dict[str, str]]:
         response.raise_for_status()
         return {loc["city"].strip().lower(): loc for loc in response.json()}
     except requests.RequestException as err:
-        print(f"HTTP error occurred: {err}")
+        logger.error("Error fetching locations from API", err=err)
         return {}
 
 
@@ -82,7 +89,7 @@ def fetch_appointments(location_id: int) -> Optional[List[Dict[str, str]]]:
         response.raise_for_status()
         return response.json()
     except requests.RequestException as error:
-        notify(f"Error for location ID {location_id}: {error}")
+        logger.error("Error for location ID %s", location_id, error=error)
         return None
 
 
@@ -90,7 +97,7 @@ def process_appointments(location_id: int, city_name: str) -> bool:
     """Processes appointments for a specific location."""
     appointments = fetch_appointments(location_id)
     if not appointments:
-        print(f"🚫 No appointments found in {city_name}.")
+        logger.info("No appointments found for %s", city_name)
         return True
 
     if location_id not in appointment_history:
@@ -105,8 +112,10 @@ def process_appointments(location_id: int, city_name: str) -> bool:
         ):
             notify(f"New appointment available on {formatted_start} in {city_name}")
             heapq.heappush(appointment_history[location_id], formatted_start)
-    print(
-        f"📅 Updated appointments for {city_name}: {sorted(appointment_history[location_id])}"
+    logger.info(
+        "Updated appointments for %s",
+        city_name,
+        message=sorted(appointment_history[location_id]),
     )
     return False
 
@@ -114,7 +123,7 @@ def process_appointments(location_id: int, city_name: str) -> bool:
 # Notification Options
 def notify(message: str) -> None:
     """Notify based on the preferred method"""
-    print(f"🔔 Notification: {message}")
+    logger.info("🔔 Notification", message=message)
     # send_sms_notification(message)
     send_email_notification("Appointment Available", message)
 
@@ -136,9 +145,9 @@ def send_email_notification(subject: str, message: str) -> None:
         server.login(FROM_EMAIL, PASSWORD)
         server.send_message(msg)
         server.quit()
-        print("Email sent successfully!")
+        logger.info("Email sent successfully!")
     except smtplib.SMTPException as e:
-        print("Error sending email:", e)
+        logger.error("Error sending email:", error=e)
 
 
 def send_sms_notification(message: str) -> NoReturn:
@@ -154,9 +163,10 @@ def send_sms_notification(message: str) -> NoReturn:
         client = Client(ACCOUNT_SID, AUTH_TOKEN)
         # Send the SMS
         client.messages.create(to=TO_NUMBER, from_=FROM_NUMBER, body=message)
-        print("Message sent successfully!")
+        logger.info("SMS sent successfully!")
     except TwilioRestException as e:
-        print(f"Failed to send message: {e}")
+        logger.error("Error sending SMS:", error=e)
+
 
 # Utility Functions
 def format_timestamp(timestamp: str) -> str:
@@ -179,8 +189,11 @@ def lookup_by_city(
 
 def main() -> NoReturn:
     """Main function to run the scanner"""
+
     locations_by_city = fetch_locations()
-    print("Available cities:", ", ".join(sorted(locations_by_city.keys())).title())
+    logger.info("Fetching available locations...")
+    logger.info("Available cities: %s", ', '.join(sorted(locations_by_city.keys())).title())
+
     cities = input("Enter cities of interest (comma-separated): ").split(",")
     location_details = {
         int(locations_by_city[city.strip().lower()]["id"]): city.strip()
@@ -188,19 +201,18 @@ def main() -> NoReturn:
         if city.strip().lower() in locations_by_city
     }
 
-    print("LOCATION_DETAILS:", location_details)
-    print("⏰ Checking for appointments...")
+    logger.info("Location Details : %s", location_details)
+    logger.info("⏰ Checking for appointments...")
 
     while True:
         errors = [
             process_appointments(loc_id, city)
             for loc_id, city in location_details.items()
         ]
-        print(
-            "⏰ Waiting for " +
-            str(ERROR_INTERVAL if any(errors) else CHECK_INTERVAL) +
-            " seconds before next check... "
-            )
+        logger.warning(
+            "⏰ Waiting for %s seconds before next check...",
+            ERROR_INTERVAL if any(errors) else CHECK_INTERVAL,
+        )
         time.sleep(ERROR_INTERVAL if any(errors) else CHECK_INTERVAL)
 
 
