@@ -15,7 +15,11 @@ from dateutil.tz import gettz
 from cachetools import cached, TTLCache
 from twilio.rest import Client
 
-# Cache configuration: maxsize is the maximum number of items in the cache, ttl is the time to live in seconds
+'''
+Cache configuration: 
+maxsize is the maximum number of items in the cache
+ttl is the time to live in seconds
+'''
 CACHE_MAXSIZE = 100
 CACHE_TTL = 15 * 24 * 60 * 60  # 15 days
 CACHE = TTLCache(maxsize=CACHE_MAXSIZE, ttl=CACHE_TTL)
