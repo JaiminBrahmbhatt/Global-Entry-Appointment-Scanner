@@ -22,13 +22,11 @@ pip install requirements.txt
 ```
 
 ## Setup
-- Twilio Account: The script uses Twilio to send SMS notifications. You need to create a Twilio account and get your account_sid and auth_token. You also need a Twilio phone number to send SMS messages.
+- (Optional) Twilio Account: The script uses Twilio to send SMS notifications. You need to create a Twilio account and get your account_sid and auth_token. You also need a Twilio phone number to send SMS messages.
 - API Endpoint: The script is configured to fetch data from a specific API endpoint. Make sure the endpoint is correct and operational.
-- Configuration: Update the LOCATION_DETAILS dictionary in the script to include the location IDs and names for which you want to check appointments.
 
 ## Configuration Variables
-- `API_URL_TEMPLATE`: URL template for the API endpoint.
-- `LOCATION_DETAILS`: Dictionary mapping location IDs to their names.
+- `APPOINTMENTS_API_URL`: URL for the API endpoint.
 - `CHECK_INTERVAL`: Time interval (in seconds) between checks when no errors occur.
 - `ERROR_INTERVAL`: Time interval (in seconds) between checks when an error occurs.
 
@@ -36,18 +34,23 @@ pip install requirements.txt
 To run the script, simply execute it from the command line:
 
 ```bash
-python appointment_scanner.py
+python3 appointment_scanner.py
 ```
 
 The script will continuously check for new appointments and print updates to the console. If a new appointment is found, it will send an SMS notification.
 
-## Notification
-To enable SMS notifications, uncomment the Twilio client creation and message sending lines in the notify function, and fill in the necessary Twilio information:
-- `account_sid`
-- `auth_token`
-- to (recipient phone number)
-- from_ (Twilio phone number)
+## SMS and Email Notifications
+To enable SMS notifications, add following credentials in `.env` file:
+- `account_sid` (Twilio account SID)
+- `auth_token` (Twilio account auth token)
+- `to_number` (recipient phone number)
+- `from_number` (Twilio phone number)
 
-##  Thank you to these two amazing folks for the inspiration
+To enable email notifications, add following credentials in `.env` file:
+- `to_email` (recipient email address)
+- `from_` (sender email address)
+- `password` (sender email password)
+
+## Thank you to the following open source projects for inspiration:
 - https://gist.github.com/serg06/ac46defe2d9f568ac39665bd50d2e1b1
 - https://gist.github.com/clay584/bcbbe3803ca6414ce09426a2c3d4abfb

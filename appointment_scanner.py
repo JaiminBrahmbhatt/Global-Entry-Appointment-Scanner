@@ -198,7 +198,7 @@ def main() -> NoReturn:
         ]
         print(
             "⏰ Waiting for " +
-            ('' if any(errors) else '') +
+            str(ERROR_INTERVAL if any(errors) else CHECK_INTERVAL) +
             " seconds before next check... "
             )
         time.sleep(ERROR_INTERVAL if any(errors) else CHECK_INTERVAL)
