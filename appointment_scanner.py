@@ -3,6 +3,7 @@ Scan for available appointments using specific APIs,
 send notifications via email or SMS, and manage appointment data.
 """
 
+import os
 import time
 import datetime
 import heapq
@@ -10,6 +11,8 @@ import smtplib
 from typing import Dict, List, Optional, NoReturn
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
+
+import dotenv
 import requests
 from dateutil import parser
 from dateutil.tz import gettz
@@ -43,9 +46,12 @@ ERROR_INTERVAL = 60  # 1 minute
 # EMAIL configuration
 SMTP_SERVER = "smtp.gmail.com"  # SMTP server for Gmail
 SMTP_PORT = 587
-FROM_EMAIL = ""  # Sender's email address
-TO_EMAIL = ""  # Recipient's email address
-PASSWORD = ""  # Sender's email password
+
+# Email credentials
+dotenv.load_dotenv()
+FROM_EMAIL = os.getenv('FROM_EMAIL')
+TO_EMAIL = os.getenv('TO_EMAIL')
+PASSWORD = os.getenv('PASSWORD')
 
 appointment_history: Dict[int, List[str]] = {}
 
