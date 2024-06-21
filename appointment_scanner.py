@@ -76,8 +76,8 @@ def fetch_locations() -> Dict[str, Dict[str, str]]:
         response = requests.get(LOCATIONS_API_URL, timeout=10)
         response.raise_for_status()
         return {loc["city"].strip().lower(): loc for loc in response.json()}
-    except requests.RequestException as err:
-        logger.error("Error fetching locations from API - %s", err)
+    except requests.RequestException as e:
+        logger.error("Error fetching locations from API - %s", e)
         return {}
     except TimeoutError as err:
         logger.error("Timeout fetching locations from API - %s", err)
@@ -92,8 +92,8 @@ def fetch_appointments(location_id: int) -> Optional[List[Dict[str, str]]]:
         )
         response.raise_for_status()
         return response.json()
-    except requests.RequestException as err:
-        logger.error("Error for location ID %s - %s", location_id, err)
+    except requests.RequestException as e:
+        logger.error("Error for location ID %s - %s", location_id, e)
         return None
     except TimeoutError as err:
         logger.error("Timeout error for location ID %s - %s", location_id, err)
@@ -130,21 +130,43 @@ def process_appointments(location_id: int, city_name: str) -> bool:
 # Notification Options
 def notify(message: str) -> None:
     """Notify based on the preferred method"""
+
+    if (
+        len(message.strip()) == 0
+    ):
+        raise ValueError("Message cannot be empty")
+
     logger.info("🔔 Notification : %s", message)
-    # send_sms_notification(message)
-    send_email_notification("Appointment Available", message)
+
+    try:
+        # send_sms_notification(message)  # uncomment to enable SMS notifications
+        send_email_notification("Appointment Available", message)
+    except ValueError as ve:
+        logger.error("Invalid value: %s", str(ve))
 
 
 def send_email_notification(subject: str, message: str) -> None:
     """
     Sends an email notification.
     """
+
+    # Validate input parameters
+    if not FROM_EMAIL or not TO_EMAIL:
+        raise ValueError("FROM_EMAIL and TO_EMAIL are required")
+    if not subject:
+        raise ValueError("Subject is required")
+    if not message:
+        raise ValueError("Message is required")
+    if not PASSWORD:
+        raise ValueError("Password is required")
+
     # Create MIME multipart message
     msg = MIMEMultipart()
     msg["From"] = FROM_EMAIL
     msg["To"] = TO_EMAIL
     msg["Subject"] = subject
     msg.attach(MIMEText(message, "plain"))
+
     try:
         # Connect to the SMTP server and send the email
         server = smtplib.SMTP(SMTP_SERVER, SMTP_PORT)
@@ -154,7 +176,7 @@ def send_email_notification(subject: str, message: str) -> None:
         server.quit()
         logger.info("Email sent successfully!")
     except smtplib.SMTPException as e:
-        logger.error("Error sending email:", error=e)
+        logger.error("Error sending email: %s", e)
 
 
 def send_sms_notification(message: str) -> NoReturn:
@@ -165,14 +187,23 @@ def send_sms_notification(message: str) -> NoReturn:
     Returns:
     NoReturn
     """
+
+    # Validate input parameters
+    if not TO_NUMBER or not FROM_NUMBER:
+        raise ValueError("To and From numbers are required")
+    if not ACCOUNT_SID or not AUTH_TOKEN:
+        raise ValueError("Account SID and Auth Token are required")
+    if not message:
+        raise ValueError("Message is required")
+
     try:
         # Create the Twilio client
         client = Client(ACCOUNT_SID, AUTH_TOKEN)
         # Send the SMS
         client.messages.create(to=TO_NUMBER, from_=FROM_NUMBER, body=message)
         logger.info("SMS sent successfully!")
-    except TwilioRestException as err:
-        logger.error("Error sending SMS: %s", err)
+    except TwilioRestException as e:
+        logger.error("Error sending SMS: %s", e)
 
 
 # Utility Functions
