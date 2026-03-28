@@ -2,47 +2,53 @@
 Output docs/demo.gif
 
 Set Shell "zsh"
-Set FontSize 14
+Set FontSize 15
 Set Width 900
-Set Height 500
+Set Height 480
 Set Theme "Dracula"
-Set Padding 20
-Set TypingSpeed 80ms
+Set Padding 24
+Set TypingSpeed 60ms
+Set PlaybackSpeed 1.0
 
-# Activate venv silently
+# Clean up environment silently — set a tidy prompt, activate venv
 Hide
-Type "source /Users/jaiminb/Code/Global-Entry-Appointment-Scanner/.venv/bin/activate && clear"
+Type "source /Users/jaiminb/Code/Global-Entry-Appointment-Scanner/.venv/bin/activate"
 Enter
-Sleep 500ms
+Sleep 200ms
+Type "export PS1='$ '"
+Enter
+Sleep 200ms
+Type "clear"
+Enter
+Sleep 300ms
 Show
 
-# --- Step 1: Setup ---
+# Step 1: Run setup
 Type "global-entry-scanner setup"
 Enter
 Sleep 4s
 
-# Location picker: select the first city (Space to check, Enter to confirm)
+# Select the first city in the list with Space, confirm with Enter
 Space
-Sleep 500ms
+Sleep 800ms
 Enter
-Sleep 1s
+Sleep 1200ms
 
-# Notification channels: skip (Enter = defaults to console)
+# Skip notification channels — defaults to console
 Enter
-Sleep 1s
+Sleep 1200ms
 
-# Config saved
-Sleep 500ms
-
+# Let the "Config saved" message sit for a moment
+Sleep 800ms
 Type "clear"
 Enter
-Sleep 300ms
+Sleep 400ms
 
-# --- Step 2: Scan ---
+# Step 2: Run scan
 Type "global-entry-scanner scan"
 Enter
-Sleep 8s
+Sleep 7s
 
-# Stop after first poll
+# Stop cleanly
 Ctrl+C
-Sleep 500ms
+Sleep 1s
