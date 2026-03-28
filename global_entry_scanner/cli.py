@@ -19,6 +19,7 @@ from global_entry_scanner.config import (
     load_config,
     save_config,
 )
+from global_entry_scanner.notifications.console import ConsoleNotifier
 from global_entry_scanner.notifications.discord import DiscordNotifier
 from global_entry_scanner.notifications.email import EmailNotifier
 from global_entry_scanner.notifications.slack import SlackNotifier
@@ -73,7 +74,7 @@ def setup() -> None:
         click.echo("No locations selected. Exiting.")
         raise SystemExit(1)
 
-    channel_choices = ["email", "discord", "slack", "sms"]
+    channel_choices = ["console", "email", "discord", "slack", "sms"]
     selected_channels: list[str] = questionary.checkbox(
         "Which notification channels do you want to enable?",
         choices=channel_choices,
@@ -114,7 +115,11 @@ def setup() -> None:
         locations=LocationsConfig(ids=selected_ids),
         scanner=ScannerConfig(),
         notifications=NotificationConfig(
-            discord=discord_cfg, slack=slack_cfg, email=email_cfg, sms=sms_cfg
+            discord=discord_cfg,
+            slack=slack_cfg,
+            email=email_cfg,
+            sms=sms_cfg,
+            console="console" in selected_channels,
         ),
     )
     save_config(cfg, _config_path())
@@ -164,9 +169,13 @@ def scan(location_names: str | None, notify_channels: str | None) -> None:
     )
 
     active_channels = (
-        set(notify_channels.split(",")) if notify_channels else {"email", "discord", "slack", "sms"}
+        set(notify_channels.split(","))
+        if notify_channels
+        else {"console", "email", "discord", "slack", "sms"}
     )
 
+    if cfg.notifications.console and "console" in active_channels:
+        scanner.add_notifier(ConsoleNotifier())
     if cfg.notifications.discord and "discord" in active_channels:
         scanner.add_notifier(DiscordNotifier(webhook_url=cfg.notifications.discord.webhook_url))
     if cfg.notifications.slack and "slack" in active_channels:

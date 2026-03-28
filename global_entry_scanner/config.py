@@ -56,6 +56,7 @@ class NotificationConfig:
     slack: SlackConfig | None = None
     email: EmailConfig | None = None
     sms: SMSConfig | None = None
+    console: bool = False
 
 
 @dataclass
@@ -108,10 +109,14 @@ def load_config(path: Path | None = None) -> Config:
             from_number=d["from_number"],
         )
 
+    console = notif_data.get("console", {}).get("enabled", False)
+
     return Config(
         locations=locations,
         scanner=scanner,
-        notifications=NotificationConfig(discord=discord, slack=slack, email=email, sms=sms),
+        notifications=NotificationConfig(
+            discord=discord, slack=slack, email=email, sms=sms, console=console
+        ),
     )
 
 
@@ -151,6 +156,12 @@ def save_config(cfg: Config, path: Path | None = None) -> None:
             f'from_email = "{e.from_email}"',
             f'to_email = "{e.to_email}"',
             f'password = "{e.password}"',
+            "",
+        ]
+    if cfg.notifications.console:
+        lines += [
+            "[notifications.console]",
+            "enabled = true",
             "",
         ]
     if cfg.notifications.sms:
