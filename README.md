@@ -5,6 +5,15 @@ Scan for open Global Entry / NEXUS appointment slots and get notified the moment
 [![CI](https://github.com/JaiminBrahmbhatt/Global-Entry-Appointment-Scanner/actions/workflows/ci.yml/badge.svg)](https://github.com/JaiminBrahmbhatt/Global-Entry-Appointment-Scanner/actions/workflows/ci.yml)
 [![PyPI](https://img.shields.io/pypi/v/global-entry-scanner)](https://pypi.org/project/global-entry-scanner/)
 
+### Works with
+
+[![Claude](https://img.shields.io/badge/Claude-Desktop%20%7C%20Code-black?logo=anthropic)](https://claude.ai)
+[![Cursor](https://img.shields.io/badge/Cursor-MCP-black?logo=cursor)](https://cursor.sh)
+[![Windsurf](https://img.shields.io/badge/Windsurf-MCP-black)](https://windsurf.ai)
+[![Gemini CLI](https://img.shields.io/badge/Gemini%20CLI-MCP-black?logo=google)](https://github.com/google-gemini/gemini-cli)
+[![GitHub Copilot](https://img.shields.io/badge/GitHub%20Copilot-MCP-black?logo=github)](https://github.com/features/copilot)
+[![VS Code](https://img.shields.io/badge/VS%20Code-MCP-black?logo=visualstudiocode)](https://code.visualstudio.com)
+
 ![demo](docs/demo.gif)
 
 ## Install
@@ -166,7 +175,28 @@ Install with `pip install global-entry-scanner[mcp]`, then run `global-entry-sca
 
 Exposes six tools to AI agents: `get_locations`, `search_locations`, `check_appointments`, `start_scan`, `stop_scan`, `get_scan_status`.
 
-**Claude Desktop (`claude_desktop_config.json`):**
+The MCP server works with any MCP-compatible AI tool. The config snippet is the same across all of them — just drop it in the right file.
+
+**Claude Desktop** — `~/Library/Application Support/Claude/claude_desktop_config.json`
+
+**Cursor** — `~/.cursor/mcp.json`
+
+**Windsurf** — `~/.codeium/windsurf/mcp_config.json`
+
+**VS Code (GitHub Copilot)** — `.vscode/mcp.json` in your workspace
+
+```json
+{
+  "mcpServers": {
+    "global-entry-scanner": {
+      "command": "global-entry-scanner",
+      "args": ["mcp"]
+    }
+  }
+}
+```
+
+**Gemini CLI** — add to `~/.gemini/settings.json`:
 
 ```json
 {
