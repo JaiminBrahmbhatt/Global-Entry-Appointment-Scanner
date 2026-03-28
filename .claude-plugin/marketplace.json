@@ -1,0 +1,23 @@
+{
+  "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
+  "name": "global-entry-scanner",
+  "description": "Find open Global Entry and NEXUS appointment slots and get notified",
+  "owner": {
+    "name": "Jaimin Brahmbhatt",
+    "url": "https://github.com/JaiminBrahmbhatt"
+  },
+  "plugins": [
+    {
+      "name": "global-entry-scanner",
+      "description": "Find open Global Entry and NEXUS appointment slots and get notified. Helps you search for slots, set up continuous background monitoring, configure Discord/Slack/SMS/Email notifications, and hook up the MCP server to Claude Desktop.",
+      "category": "productivity",
+      "source": {
+        "source": "git-subdir",
+        "url": "JaiminBrahmbhatt/Global-Entry-Appointment-Scanner",
+        "path": ".",
+        "ref": "main"
+      },
+      "homepage": "https://github.com/JaiminBrahmbhatt/Global-Entry-Appointment-Scanner"
+    }
+  ]
+}

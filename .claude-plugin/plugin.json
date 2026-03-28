@@ -1,0 +1,9 @@
+{
+  "name": "global-entry-scanner",
+  "description": "Find open Global Entry and NEXUS appointment slots and get notified. Includes a skill that helps you search for slots, set up continuous background monitoring, configure Discord/Slack/SMS/Email notifications, and hook up the MCP server to Claude Desktop.",
+  "author": {
+    "name": "Jaimin Brahmbhatt",
+    "url": "https://github.com/JaiminBrahmbhatt"
+  },
+  "homepage": "https://github.com/JaiminBrahmbhatt/Global-Entry-Appointment-Scanner"
+}
