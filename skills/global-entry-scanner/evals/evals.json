@@ -1,0 +1,42 @@
+{
+  "skill_name": "global-entry-scanner",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "I just got conditionally approved for Global Entry and need to schedule my interview. Are there any open appointment slots near Chicago or Dallas in the next few months? I don't have the scanner set up yet.",
+      "expected_output": "Tells the user how to find location IDs for Chicago and Dallas, and either uses the CLI to check slots or guides them to install/run the scanner. Presents any available appointments clearly or explains how to monitor if nothing is open.",
+      "files": [],
+      "assertions": [
+        "Mentions Chicago and Dallas locations by name or ID",
+        "Provides actionable next steps (install command or CLI command to check slots)",
+        "If no slots are found, suggests setting up monitoring",
+        "Does not hallucinate appointment times — either uses real tool or instructs user to run the CLI themselves"
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "I want to set this thing up so it runs in the background and texts me or sends a Discord message whenever a Global Entry slot opens up at JFK or Newark. What do I need to do?",
+      "expected_output": "Walks through installing the scanner with SMS and/or Discord extras, running setup to configure notification channels, and starting scan in the background with nohup. Includes how to stop it and watch logs.",
+      "files": [],
+      "assertions": [
+        "Includes the correct pip install command with [sms] and/or [discord] extras",
+        "Mentions `global-entry-scanner setup` for interactive configuration",
+        "Provides a nohup or background command to keep it running",
+        "Explains how to stop the background process",
+        "Covers Discord webhook steps OR Twilio SMS steps (or both)"
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "hey does global entry scanner work as an mcp? i have it installed already with the mcp extra. how do i hook it up to claude desktop so i can just ask you directly to check for slots?",
+      "expected_output": "Explains how to start the MCP server, provides the claude_desktop_config.json snippet, and explains what Claude can do once connected (check appointments, search locations, start monitoring).",
+      "files": [],
+      "assertions": [
+        "Includes the `global-entry-scanner mcp` start command",
+        "Provides the exact claude_desktop_config.json snippet with correct command and args",
+        "Explains at least 2-3 things Claude can do via MCP (check slots, search locations, start scan, etc.)",
+        "Mentions that the user needs to restart Claude Desktop after editing the config"
+      ]
+    }
+  ]
+}
