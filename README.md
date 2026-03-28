@@ -114,6 +114,39 @@ to_number   = "+12125551234"   # number to notify
 webhook_url = "https://hooks.slack.com/services/T00000000/B00000000/xxxx"
 ```
 
+## Claude Code skill
+
+This repo ships a skill for [Claude Code](https://claude.ai/code) that lets you ask Claude directly about slot availability, set up monitoring, and configure notifications — without remembering any commands.
+
+### Install the skill
+
+**Option 1: From this repo (available now)**
+
+In Claude Code, run:
+```
+/plugin marketplace add JaiminBrahmbhatt/Global-Entry-Appointment-Scanner
+/plugin install global-entry-scanner@global-entry-scanner
+```
+
+**Option 2: Official Anthropic marketplace** *(pending review)*
+
+```
+/plugin install global-entry-scanner
+```
+
+### What you can ask Claude
+
+Once installed, just talk to Claude naturally:
+
+- *"Are there any open Global Entry slots near Chicago or Dallas?"*
+- *"Set this up to text me whenever a slot opens at JFK or Newark"*
+- *"How do I hook up the MCP server to Claude Desktop?"*
+- *"Run the scanner in the background and notify me on Discord"*
+
+Claude will detect whether the MCP server is running and use it directly, or fall back to guiding you through the CLI.
+
+---
+
 ## MCP server
 
 Install with `pip install global-entry-scanner[mcp]`, then run `global-entry-scanner mcp`.
