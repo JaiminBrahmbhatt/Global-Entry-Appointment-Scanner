@@ -8,13 +8,25 @@ Scan for open Global Entry / NEXUS appointment slots and get notified the moment
 
 ## Install
 
+**Recommended — pipx** (installs CLI tools in isolated environments, no conflicts):
+
 ```bash
-pip install global-entry-scanner           # core (email only)
-pip install global-entry-scanner[slack]    # + Slack
-pip install global-entry-scanner[discord]  # + Discord
-pip install global-entry-scanner[sms]      # + Twilio SMS
-pip install global-entry-scanner[mcp]      # + MCP server for AI agents
-pip install global-entry-scanner[all]      # everything
+brew install pipx        # macOS
+pipx install global-entry-scanner           # core (email only)
+pipx install "global-entry-scanner[slack]"  # + Slack
+pipx install "global-entry-scanner[discord]"# + Discord
+pipx install "global-entry-scanner[sms]"    # + Twilio SMS
+pipx install "global-entry-scanner[mcp]"    # + MCP server for AI agents
+pipx install "global-entry-scanner[all]"    # everything
+```
+
+> On macOS, avoid using the system `pip3` — it points to Python 3.9 which is too old, and Homebrew's Python will block system-wide installs. `pipx` handles all of this automatically.
+
+**Alternative — pip** (if you're inside a virtual environment):
+
+```bash
+pip install global-entry-scanner
+pip install "global-entry-scanner[all]"
 ```
 
 ## Quick start
