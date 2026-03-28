@@ -69,6 +69,7 @@ def setup() -> None:
         "Select locations to monitor (type to search, space to select, enter to confirm):",
         choices=choices,
         use_search_filter=True,
+        use_jk_keys=False,
     ).ask()
 
     if not selected_ids:
