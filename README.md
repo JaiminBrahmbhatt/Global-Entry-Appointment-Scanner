@@ -85,6 +85,23 @@ All configured channels fire concurrently. One failing channel does not block th
 webhook_url = "https://discord.com/api/webhooks/1234567890/xxxx"
 ```
 
+### Twilio SMS setup
+
+1. Sign up at [twilio.com](https://www.twilio.com) (free trial includes a small credit)
+2. From the [Twilio Console](https://console.twilio.com) dashboard, copy your **Account SID** and **Auth Token**
+3. Go to **Phone Numbers** → **Manage** → **Buy a number** to get a Twilio number to send from (free trial includes one)
+4. Add the credentials to your config:
+
+```toml
+[notifications.sms]
+account_sid = "ACxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+auth_token  = "your_auth_token"
+from_number = "+12125550000"   # your Twilio number
+to_number   = "+12125551234"   # number to notify
+```
+
+> **Free trial note:** Twilio trial accounts can only send SMS to verified numbers. Go to **Phone Numbers** → **Manage** → **Verified Caller IDs** to add your personal number.
+
 ### Slack webhook setup
 
 1. Go to [api.slack.com/apps](https://api.slack.com/apps) → **Create New App** → **From scratch**
