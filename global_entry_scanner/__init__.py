@@ -16,8 +16,8 @@ from global_entry_scanner.notifications import (
     DiscordNotifier,
     EmailNotifier,
     Notifier,
-    SMSNotifier,
     SlackNotifier,
+    SMSNotifier,
 )
 from global_entry_scanner.scanner import Scanner
 

@@ -27,7 +27,7 @@ def get_locations() -> list[dict[str, Any]]:
             "state": loc.state,
             "timezone": loc.timezone,
         }
-        for loc in sorted(locs.values(), key=lambda l: (l.state, l.city))
+        for loc in sorted(locs.values(), key=lambda x: (x.state, x.city))
     ]
 
 

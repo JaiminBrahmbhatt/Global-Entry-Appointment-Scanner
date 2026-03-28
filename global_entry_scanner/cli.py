@@ -13,9 +13,9 @@ from global_entry_scanner.config import (
     EmailConfig,
     LocationsConfig,
     NotificationConfig,
-    SMSConfig,
     ScannerConfig,
     SlackConfig,
+    SMSConfig,
     load_config,
     save_config,
 )
@@ -46,7 +46,7 @@ def locations() -> None:
     if not locs:
         click.echo("Failed to fetch locations.")
         raise SystemExit(1)
-    for loc in sorted(locs.values(), key=lambda l: (l.state, l.city)):
+    for loc in sorted(locs.values(), key=lambda x: (x.state, x.city)):
         click.echo(f"  {loc.id:>6}  {loc.city}, {loc.state}  ({loc.name})")
 
 
@@ -62,7 +62,7 @@ def setup() -> None:
 
     choices = [
         questionary.Choice(title=f"{loc.city}, {loc.state} — {loc.name}", value=loc.id)
-        for loc in sorted(all_locs.values(), key=lambda l: (l.state, l.city))
+        for loc in sorted(all_locs.values(), key=lambda x: (x.state, x.city))
     ]
     selected_ids: list[int] = questionary.checkbox(
         "Select locations to monitor (space to select, enter to confirm):",
