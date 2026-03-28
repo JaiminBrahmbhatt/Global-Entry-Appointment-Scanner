@@ -73,6 +73,30 @@ scanner.start()  # blocking; Ctrl+C to stop
 
 All configured channels fire concurrently. One failing channel does not block the others.
 
+### Discord webhook setup
+
+1. Open your Discord server → go to the channel you want notifications in
+2. Click **Edit Channel** (gear icon) → **Integrations** → **Webhooks** → **New Webhook**
+3. Give it a name, optionally set an avatar, then click **Copy Webhook URL**
+4. Paste the URL into `setup` when prompted, or add it to your config:
+
+```toml
+[notifications.discord]
+webhook_url = "https://discord.com/api/webhooks/1234567890/xxxx"
+```
+
+### Slack webhook setup
+
+1. Go to [api.slack.com/apps](https://api.slack.com/apps) → **Create New App** → **From scratch**
+2. Under **Add features and functionality**, choose **Incoming Webhooks** → toggle it on
+3. Click **Add New Webhook to Workspace**, pick a channel, and click **Allow**
+4. Copy the webhook URL that appears, then paste it into `setup` when prompted or add it to your config:
+
+```toml
+[notifications.slack]
+webhook_url = "https://hooks.slack.com/services/T00000000/B00000000/xxxx"
+```
+
 ## MCP server
 
 Install with `pip install global-entry-scanner[mcp]`, then run `global-entry-scanner mcp`.
