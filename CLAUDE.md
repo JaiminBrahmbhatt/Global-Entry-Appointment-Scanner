@@ -2,6 +2,16 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
+## Before every commit
+
+Always run these three checks before committing. All must pass:
+
+```bash
+ruff check global_entry_scanner/ tests/
+mypy global_entry_scanner/
+pytest
+```
+
 ## Commands
 
 ```bash
