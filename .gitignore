@@ -10,3 +10,4 @@ build/
 *.env
 .env
 docs/
+!docs/demo.gif

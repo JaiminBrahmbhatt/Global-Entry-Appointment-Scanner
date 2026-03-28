@@ -6,6 +6,8 @@ Scan for open Global Entry / NEXUS appointment slots and get notified the moment
 [![PyPI](https://img.shields.io/pypi/v/global-entry-scanner)](https://pypi.org/project/global-entry-scanner/)
 [![Python](https://img.shields.io/pypi/pyversions/global-entry-scanner)](https://pypi.org/project/global-entry-scanner/)
 
+![demo](docs/demo.gif)
+
 ## Install
 
 **Recommended — pipx** (installs CLI tools in isolated environments, no conflicts):
