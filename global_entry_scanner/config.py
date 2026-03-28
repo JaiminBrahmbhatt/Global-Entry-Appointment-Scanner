@@ -8,7 +8,7 @@ from typing import Any
 if sys.version_info >= (3, 11):
     import tomllib
 else:
-    import tomli as tomllib  # type: ignore[no-redef]
+    import tomli as tomllib  # type: ignore[import-not-found,no-redef]
 
 DEFAULT_CONFIG_PATH = Path.home() / ".config" / "global-entry-scanner" / "config.toml"
 

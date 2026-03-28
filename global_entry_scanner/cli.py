@@ -172,9 +172,13 @@ def scan(location_names: str | None, notify_channels: str | None) -> None:
     if cfg.notifications.slack and "slack" in active_channels:
         scanner.add_notifier(SlackNotifier(webhook_url=cfg.notifications.slack.webhook_url))
     if cfg.notifications.email and "email" in active_channels:
-        e = cfg.notifications.email
+        email_cfg = cfg.notifications.email
         scanner.add_notifier(
-            EmailNotifier(from_email=e.from_email, to_email=e.to_email, password=e.password)
+            EmailNotifier(
+                from_email=email_cfg.from_email,
+                to_email=email_cfg.to_email,
+                password=email_cfg.password,
+            )
         )
     if cfg.notifications.sms and "sms" in active_channels:
         s_cfg = cfg.notifications.sms

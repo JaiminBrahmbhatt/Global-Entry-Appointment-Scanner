@@ -3,7 +3,7 @@ from __future__ import annotations
 import threading
 from typing import Any
 
-from mcp.server.fastmcp import FastMCP  # type: ignore[import-untyped]
+from mcp.server.fastmcp import FastMCP
 
 from global_entry_scanner.scanner import Scanner
 
@@ -47,7 +47,7 @@ def search_locations(query: str) -> list[dict[str, Any]]:
 def check_appointments(location_ids: list[int]) -> list[dict[str, Any]]:
     """Check available appointment slots for the given location IDs."""
     s = Scanner(location_ids=location_ids)
-    results = []
+    results: list[dict[str, Any]] = []
     for loc_id in location_ids:
         appointments = s.fetch_appointments(loc_id)
         results.extend(
