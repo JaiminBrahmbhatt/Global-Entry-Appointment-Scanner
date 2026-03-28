@@ -76,9 +76,12 @@ def setup() -> None:
 
     channel_choices = ["console", "email", "discord", "slack", "sms"]
     selected_channels: list[str] = questionary.checkbox(
-        "Which notification channels do you want to enable?",
+        "Which notification channels do you want to enable? (console is enabled by default)",
         choices=channel_choices,
     ).ask() or []
+
+    if not selected_channels:
+        selected_channels = ["console"]
 
     discord_cfg: DiscordConfig | None = None
     slack_cfg: SlackConfig | None = None
