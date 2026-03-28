@@ -1,5 +1,7 @@
-import pytest
 from unittest.mock import MagicMock, patch
+
+import pytest
+
 from global_entry_scanner.notifications.email import EmailNotifier
 
 

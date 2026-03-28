@@ -2,7 +2,7 @@ from unittest.mock import MagicMock
 
 import responses as resp
 
-from global_entry_scanner.models import Location, Appointment
+from global_entry_scanner.models import Appointment, Location
 from global_entry_scanner.notifications.base import Notifier
 from global_entry_scanner.scanner import APPOINTMENTS_API_URL, LOCATIONS_API_URL, Scanner
 from tests.conftest import MOCK_APPOINTMENTS, MOCK_LOCATIONS

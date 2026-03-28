@@ -1,5 +1,6 @@
 """Integration tests — hit the live CBP API. Run with: pytest -m integration"""
 import pytest
+
 from global_entry_scanner.scanner import Scanner
 
 

@@ -1,9 +1,12 @@
 from datetime import datetime, timezone
+
 from global_entry_scanner.models import Appointment, Location, ScanResult
 
 
 def test_location_stores_fields() -> None:
-    loc = Location(id=5001, name="Chicago O'Hare", city="Chicago", state="IL", timezone="America/Chicago")
+    loc = Location(
+        id=5001, name="Chicago O'Hare", city="Chicago", state="IL", timezone="America/Chicago"
+    )
     assert loc.id == 5001
     assert loc.city == "Chicago"
     assert loc.timezone == "America/Chicago"

@@ -1,6 +1,10 @@
 from pathlib import Path
+
 import pytest
-from global_entry_scanner.config import Config, DiscordConfig, EmailConfig, SMSConfig, SlackConfig, load_config
+
+from global_entry_scanner.config import (
+    load_config,
+)
 
 
 def write_toml(tmp_path: Path, content: str) -> Path:

@@ -1,3 +1,7 @@
+import pytest
+
+from global_entry_scanner.scanner import _locations_cache
+
 MOCK_LOCATIONS = [
     {
         "id": 5001,
@@ -37,9 +41,6 @@ MOCK_APPOINTMENTS = [
         "remoteInd": False,
     },
 ]
-
-import pytest
-from global_entry_scanner.scanner import _locations_cache
 
 
 @pytest.fixture(autouse=True)
