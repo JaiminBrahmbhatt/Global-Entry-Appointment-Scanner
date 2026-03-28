@@ -1,5 +1,0 @@
-cachetools
-python-dateutil
-python-dotenv
-requests
-twilio
