@@ -22,8 +22,12 @@ Scan for open Global Entry / NEXUS appointment slots and get notified the moment
 # macOS
 brew install pipx
 
-# Linux / Windows
-pip install pipx
+# Linux
+sudo apt install pipx       # Debian / Ubuntu
+sudo dnf install pipx       # Fedora
+
+# Windows
+scoop install pipx          # or: winget install pipx
 
 pipx install global-entry-scanner        # core
 pipx install "global-entry-scanner[all]" # + Discord, Slack, SMS, MCP
