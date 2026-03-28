@@ -63,10 +63,10 @@ def setup() -> None:
 
     choices = [
         questionary.Choice(title=f"{loc.city}, {loc.state} — {loc.name}", value=loc.id)
-        for loc in sorted(all_locs.values(), key=lambda x: (x.state, x.city))
+        for loc in sorted(all_locs.values(), key=lambda x: x.city)
     ]
     selected_ids: list[int] = questionary.checkbox(
-        "Select locations to monitor (space to select, enter to confirm):",
+        "Select locations to monitor (type to search, space to select, enter to confirm):",
         choices=choices,
     ).ask()
 

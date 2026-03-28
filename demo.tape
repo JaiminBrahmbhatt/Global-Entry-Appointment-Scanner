@@ -21,20 +21,18 @@ Type "global-entry-scanner setup"
 Enter
 Sleep 4s
 
-# Location picker: type "Austin" to filter, Space to select, Enter to confirm
-Type "Austin"
-Sleep 1s
+# Location picker: select the first city (Space to check, Enter to confirm)
 Space
 Sleep 500ms
 Enter
 Sleep 1s
 
-# Notification channels: skip all (just Enter)
+# Notification channels: skip (Enter = defaults to console)
 Enter
 Sleep 1s
 
-# Config saved message appears
-Sleep 1s
+# Config saved
+Sleep 500ms
 
 Type "clear"
 Enter
@@ -45,6 +43,6 @@ Type "global-entry-scanner scan"
 Enter
 Sleep 8s
 
-# Stop the blocking loop after first poll
+# Stop after first poll
 Ctrl+C
 Sleep 500ms
