@@ -4,7 +4,7 @@ import logging
 import time
 from concurrent.futures import ThreadPoolExecutor
 from datetime import datetime
-from typing import Any, cast
+from typing import Any
 
 import requests
 from cachetools import TTLCache
@@ -89,7 +89,7 @@ class Scanner:
             for item in data
         ]
 
-    def _get(self, url: str, max_retries: int = 3) -> list[dict[str, Any]]:
+    def _get(self, url: str, max_retries: int = 3) -> Any:
         """GET with exponential backoff. Raises on 4xx (permanent) or after max_retries."""
         last_exc: Exception = RuntimeError("no attempts made")
         for attempt in range(max_retries):
@@ -98,7 +98,7 @@ class Scanner:
                 if 400 <= response.status_code < 500:
                     response.raise_for_status()
                 response.raise_for_status()
-                return cast(list[dict[str, Any]], response.json())
+                return response.json()
             except requests.HTTPError as e:
                 if e.response is not None and 400 <= e.response.status_code < 500:
                     raise
