@@ -4,7 +4,6 @@ Scan for open Global Entry / NEXUS appointment slots and get notified the moment
 
 [![CI](https://github.com/JaiminBrahmbhatt/Global-Entry-Appointment-Scanner/actions/workflows/ci.yml/badge.svg)](https://github.com/JaiminBrahmbhatt/Global-Entry-Appointment-Scanner/actions/workflows/ci.yml)
 [![PyPI](https://img.shields.io/pypi/v/global-entry-scanner)](https://pypi.org/project/global-entry-scanner/)
-[![Python](https://img.shields.io/pypi/pyversions/global-entry-scanner)](https://pypi.org/project/global-entry-scanner/)
 
 ![demo](docs/demo.gif)
 
