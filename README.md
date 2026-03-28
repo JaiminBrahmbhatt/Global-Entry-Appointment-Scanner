@@ -1,56 +1,148 @@
-# Global-Entry-Appointment-Scanner
+# Global Entry Appointment Scanner
 
-## Overview
-This Python script automatically checks for available appointments at specified locations and notifies the user when new appointments are available for global entry / NEXUS locations. 
+Scan for open Global Entry / NEXUS appointment slots and get notified the moment one appears.
 
-The script fetches appointment data from an API, processes the data to find new available slots, and sends notifications to the user. It is set up to check for appointments every 15 minutes, but this interval can be adjusted as needed.
+[![CI](https://github.com/JaiminBrahmbhatt/Global-Entry-Appointment-Scanner/actions/workflows/ci.yml/badge.svg)](https://github.com/JaiminBrahmbhatt/Global-Entry-Appointment-Scanner/actions/workflows/ci.yml)
+[![PyPI](https://img.shields.io/pypi/v/global-entry-scanner)](https://pypi.org/project/global-entry-scanner/)
+[![Python](https://img.shields.io/pypi/pyversions/global-entry-scanner)](https://pypi.org/project/global-entry-scanner/)
 
-## Build Status
-[![Pylint](https://github.com/JaiminBrahmbhatt/Global-Entry-Appointment-Scanner/actions/workflows/pylint.yml/badge.svg)](https://github.com/JaiminBrahmbhatt/Global-Entry-Appointment-Scanner/actions/workflows/pylint.yml)
-
-[![CodeQL](https://github.com/JaiminBrahmbhatt/Global-Entry-Appointment-Scanner/actions/workflows/codeql.yml/badge.svg)](https://github.com/JaiminBrahmbhatt/Global-Entry-Appointment-Scanner/actions/workflows/codeql.yml)
-
-
-
-## Prerequisites
-Before running the script, ensure you have the following installed:
-- Python 3.6 or higher
-
-You can install the required Python libraries using pip:
-```bash
-pip install -r requirements.txt
-```
-
-## Setup
-- (Optional) Twilio Account: The script uses Twilio to send SMS notifications. You need to create a Twilio account and get your account_sid and auth_token. You also need a Twilio phone number to send SMS messages.
-- API Endpoint: The script is configured to fetch data from a specific API endpoint. Make sure the endpoint is correct and operational.
-
-## Configuration Variables
-- `APPOINTMENTS_API_URL`: URL for the API endpoint.
-- `CHECK_INTERVAL`: Time interval (in seconds) between checks when no errors occur.
-- `ERROR_INTERVAL`: Time interval (in seconds) between checks when an error occurs.
-
-## Running the Script
-To run the script, simply execute it from the command line:
+## Install
 
 ```bash
-python3 appointment_scanner.py
+pip install global-entry-scanner           # core (email only)
+pip install global-entry-scanner[slack]    # + Slack
+pip install global-entry-scanner[discord]  # + Discord
+pip install global-entry-scanner[sms]      # + Twilio SMS
+pip install global-entry-scanner[mcp]      # + MCP server for AI agents
+pip install global-entry-scanner[all]      # everything
 ```
 
-The script will continuously check for new appointments and print updates to the console. If a new appointment is found, it will send an SMS notification.
+## Quick start
 
-## SMS and Email Notifications
-To enable SMS notifications, add following credentials in `.env` file:
-- `account_sid` (Twilio account SID)
-- `auth_token` (Twilio account auth token)
-- `to_number` (recipient phone number)
-- `from_number` (Twilio phone number)
+```bash
+# 1. Interactive setup — pick locations and configure notifications
+global-entry-scanner setup
 
-To enable email notifications, add following credentials in `.env` file:
-- `to_email` (recipient email address)
-- `from_` (sender email address)
-- `password` (sender email password)
+# 2. Run the scanner
+global-entry-scanner scan
+```
 
-## Thank you to the following open source projects for inspiration:
+## CLI
+
+```bash
+global-entry-scanner locations                                    # list all enrollment centers
+global-entry-scanner setup                                        # interactive config wizard
+global-entry-scanner scan                                         # run with saved config
+global-entry-scanner scan --locations "Chicago, Dallas"           # override locations
+global-entry-scanner scan --notify email,slack                    # override channels
+global-entry-scanner mcp                                          # start MCP server
+```
+
+Config is saved to `~/.config/global-entry-scanner/config.toml`.
+
+## Python API
+
+```python
+from global_entry_scanner import Scanner
+from global_entry_scanner.notifications import SlackNotifier, DiscordNotifier, EmailNotifier
+
+scanner = Scanner(location_ids=[5001, 5140])
+scanner.add_notifier(SlackNotifier(webhook_url="https://hooks.slack.com/..."))
+scanner.add_notifier(DiscordNotifier(webhook_url="https://discord.com/api/webhooks/..."))
+scanner.add_notifier(EmailNotifier(from_email="you@gmail.com", to_email="you@gmail.com", password="app-password"))
+scanner.start()  # blocking; Ctrl+C to stop
+```
+
+`Scanner` options:
+
+| Parameter | Default | Description |
+|-----------|---------|-------------|
+| `location_ids` | required | List of enrollment center IDs |
+| `check_interval` | `900` | Seconds between polls (no errors) |
+| `error_interval` | `60` | Seconds between polls (on error) |
+| `limit` | `5` | Max appointments to fetch per location |
+
+## Notification channels
+
+| Channel | Extra | Credentials |
+|---------|-------|-------------|
+| Email | _(core)_ | Gmail address + app password |
+| Discord | `[discord]` | Webhook URL |
+| Slack | `[slack]` | Webhook URL |
+| SMS | `[sms]` | Twilio account SID, auth token, phone numbers |
+
+All configured channels fire concurrently. One failing channel does not block the others.
+
+## MCP server
+
+Install with `pip install global-entry-scanner[mcp]`, then run `global-entry-scanner mcp`.
+
+Exposes six tools to AI agents: `get_locations`, `search_locations`, `check_appointments`, `start_scan`, `stop_scan`, `get_scan_status`.
+
+**Claude Desktop (`claude_desktop_config.json`):**
+
+```json
+{
+  "mcpServers": {
+    "global-entry-scanner": {
+      "command": "global-entry-scanner",
+      "args": ["mcp"]
+    }
+  }
+}
+```
+
+## Configuration file
+
+`~/.config/global-entry-scanner/config.toml`
+
+```toml
+[scanner]
+check_interval = 900
+error_interval = 60
+limit = 5
+
+[locations]
+ids = [5001, 5140]
+
+[notifications.discord]
+webhook_url = "https://discord.com/api/webhooks/..."
+
+[notifications.slack]
+webhook_url = "https://hooks.slack.com/..."
+
+[notifications.email]
+from_email = "you@gmail.com"
+to_email = "you@gmail.com"
+password = "app-password"
+
+[notifications.sms]
+account_sid = "..."
+auth_token = "..."
+to_number = "+12125551234"
+from_number = "+12125550000"
+```
+
+## Development
+
+```bash
+git clone https://github.com/JaiminBrahmbhatt/Global-Entry-Appointment-Scanner
+cd Global-Entry-Appointment-Scanner
+pip install -e ".[all,dev]"
+
+# Run tests
+pytest
+
+# Run live API tests
+pytest -m integration
+
+# Lint + type check
+ruff check .
+mypy global_entry_scanner/
+```
+
+## Credits
+
+Inspired by:
 - https://gist.github.com/serg06/ac46defe2d9f568ac39665bd50d2e1b1
 - https://gist.github.com/clay584/bcbbe3803ca6414ce09426a2c3d4abfb
