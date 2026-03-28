@@ -68,6 +68,7 @@ def setup() -> None:
     selected_ids: list[int] = questionary.checkbox(
         "Select locations to monitor (type to search, space to select, enter to confirm):",
         choices=choices,
+        use_search_filter=True,
     ).ask()
 
     if not selected_ids:
