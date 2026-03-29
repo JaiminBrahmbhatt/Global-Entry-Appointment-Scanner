@@ -19,7 +19,7 @@
       "expected_output": "Walks through installing the scanner with SMS and/or Discord extras, running setup to configure notification channels, and starting scan in the background with nohup. Includes how to stop it and watch logs.",
       "files": [],
       "assertions": [
-        "Includes the correct pip install command with [sms] and/or [discord] extras",
+        "Includes the correct pip install command (pip install global-entry-scanner)",
         "Mentions `global-entry-scanner setup` for interactive configuration",
         "Provides a nohup or background command to keep it running",
         "Explains how to stop the background process",

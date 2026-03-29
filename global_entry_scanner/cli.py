@@ -211,9 +211,6 @@ def scan(location_names: str | None, notify_channels: str | None) -> None:
 @cli.command("mcp")
 def mcp_command() -> None:
     """Start the MCP server for AI agent integration."""
-    try:
-        from global_entry_scanner.mcp_server import app
-    except ImportError as e:
-        click.echo("MCP support not installed. Run: pip install global-entry-scanner[mcp]")
-        raise SystemExit(1) from e
+    from global_entry_scanner.mcp_server import app
+
     app.run()

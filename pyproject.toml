@@ -18,12 +18,11 @@ dependencies = [
     "python-dateutil>=2.8",
     "cachetools>=5.0",
     "tomli>=2.0; python_version < '3.11'",
+    "twilio>=8.0",
+    "mcp>=1.0",
 ]
 
 [project.optional-dependencies]
-sms = ["twilio>=8.0"]
-mcp = ["mcp>=1.0"]
-all = ["global-entry-scanner[sms,mcp]"]
 dev = [
     "pytest>=7.0",
     "responses>=0.23",
@@ -55,10 +54,6 @@ strict = true
 
 [[tool.mypy.overrides]]
 module = "global_entry_scanner.config"
-warn_unused_ignores = false
-
-[[tool.mypy.overrides]]
-module = "global_entry_scanner.notifications.sms"
 warn_unused_ignores = false
 
 [tool.pytest.ini_options]

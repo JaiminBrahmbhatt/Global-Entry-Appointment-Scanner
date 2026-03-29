@@ -15,8 +15,8 @@ pytest
 ## Commands
 
 ```bash
-# Install for development (all extras + dev tools)
-pip install -e ".[all,dev]"
+# Install for development
+pip install -e ".[dev]"
 
 # Run all tests
 pytest
@@ -51,9 +51,9 @@ global_entry_scanner/
 │   ├── email.py       # Gmail SMTP
 │   ├── discord.py     # Discord webhook
 │   ├── slack.py       # Slack webhook
-│   └── sms.py         # Twilio (optional dep, graceful ImportError fallback)
+│   └── sms.py         # Twilio SMS
 ├── cli.py             # Click CLI (setup, scan, locations, mcp commands)
-└── mcp_server.py      # FastMCP server (optional [mcp] extra)
+└── mcp_server.py      # FastMCP server
 ```
 
 ### Key design decisions
@@ -67,8 +67,6 @@ global_entry_scanner/
 **`Scanner._get()`** retries up to 3 times with exponential backoff on 5xx/network errors. It raises immediately on 4xx. `fetch_appointments` only catches 404 (returns `[]`); all other errors propagate to `check_once` which records them in `ScanResult.error`.
 
 **Concurrent notifications** — `_notify_all()` uses `ThreadPoolExecutor`. Failures are logged per-channel and never re-raised.
-
-**Optional deps** — `sms.py` does a top-level `try/except ImportError` for `twilio`. `mcp_server.py` is only imported when `mcp` extra is installed. Both modules have per-module `warn_unused_ignores = false` mypy overrides in `pyproject.toml` because the except branches are unreachable when the deps are installed.
 
 ### Config
 

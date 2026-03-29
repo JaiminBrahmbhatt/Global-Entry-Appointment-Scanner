@@ -59,7 +59,7 @@ global-entry-scanner scan --locations "Chicago" --notify none
 Walk the user through:
 ```bash
 # Step 1: Install
-pip install global-entry-scanner[all]   # or specific extras: [slack], [discord], [sms]
+pip install global-entry-scanner
 
 # Step 2: Interactive setup (locations + notification channels)
 global-entry-scanner setup
@@ -119,12 +119,7 @@ get notified the moment something opens.
 ## Install reference
 
 ```bash
-pip install global-entry-scanner           # core (email only)
-pip install global-entry-scanner[slack]    # + Slack
-pip install global-entry-scanner[discord]  # + Discord
-pip install global-entry-scanner[sms]      # + Twilio SMS
-pip install global-entry-scanner[mcp]      # + MCP server
-pip install global-entry-scanner[all]      # everything
+pip install global-entry-scanner   # includes all notification channels + MCP server
 ```
 
 MCP server: run `global-entry-scanner mcp`, then add to Claude Desktop config:

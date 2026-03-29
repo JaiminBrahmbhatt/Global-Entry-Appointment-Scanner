@@ -29,8 +29,7 @@ sudo dnf install pipx       # Fedora
 # Windows
 scoop install pipx          # or: winget install pipx
 
-pipx install global-entry-scanner        # core
-pipx install "global-entry-scanner[all]" # + Discord, Slack, SMS, MCP
+pipx install global-entry-scanner
 ```
 
 > Inside a virtual environment? `pip install global-entry-scanner` works too.
@@ -56,7 +55,7 @@ global-entry-scanner mcp                                # start MCP server
 Works with Claude Desktop, Cursor, Windsurf, Gemini CLI, VS Code, and any MCP-compatible tool.
 
 ```bash
-pipx install "global-entry-scanner[mcp]"
+pipx install global-entry-scanner
 global-entry-scanner mcp
 ```
 
