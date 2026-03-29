@@ -9,7 +9,18 @@ description = "Scan for Global Entry / NEXUS appointment slots and get notified"
 readme = "README.md"
 requires-python = ">=3.10"
 license = { text = "MIT" }
+authors = [{ name = "Jaimin Brahmbhatt", email = "2418702+JaiminBrahmbhatt@users.noreply.github.com" }]
 keywords = ["global-entry", "nexus", "trusted-traveler", "appointments", "notifications"]
+classifiers = [
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Operating System :: OS Independent",
+    "Environment :: Console",
+    "Topic :: Utilities",
+]
 dependencies = [
     "click>=8.0",
     "questionary>=2.0",
@@ -39,7 +50,10 @@ global-entry-scanner = "global_entry_scanner.cli:cli"
 
 [project.urls]
 Homepage = "https://github.com/JaiminBrahmbhatt/Global-Entry-Appointment-Scanner"
+Documentation = "https://github.com/JaiminBrahmbhatt/Global-Entry-Appointment-Scanner/wiki"
+Source = "https://github.com/JaiminBrahmbhatt/Global-Entry-Appointment-Scanner"
 Issues = "https://github.com/JaiminBrahmbhatt/Global-Entry-Appointment-Scanner/issues"
+Changelog = "https://github.com/JaiminBrahmbhatt/Global-Entry-Appointment-Scanner/releases"
 
 [tool.ruff]
 line-length = 100
