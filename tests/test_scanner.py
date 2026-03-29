@@ -117,3 +117,35 @@ def test_notify_all_continues_when_one_notifier_fails() -> None:
     scanner.add_notifier(n2)
     scanner._notify_all("subject", "message")
     n2.send.assert_called_once_with("subject", "message")
+
+
+@resp.activate
+def test_start_batches_all_slots_into_one_notification() -> None:
+    resp.add(resp.GET, LOCATIONS_API_URL, json=MOCK_LOCATIONS)
+    url = APPOINTMENTS_API_URL.format(5, 5001, 1)
+    # Two slots available on first check, none on second (to stop the loop via KeyboardInterrupt)
+    resp.add(resp.GET, url, json=MOCK_APPOINTMENTS)
+
+    notifier: MagicMock = MagicMock(spec=Notifier)
+    scanner = Scanner(location_ids=[5001], check_interval=0, error_interval=0)
+    scanner.add_notifier(notifier)
+
+    # Patch time.sleep to raise KeyboardInterrupt after first iteration
+    call_count = 0
+
+    def stop_after_first(seconds: float) -> None:
+        nonlocal call_count
+        call_count += 1
+        raise KeyboardInterrupt
+
+    import unittest.mock as mock
+    with mock.patch("global_entry_scanner.scanner.time.sleep", side_effect=stop_after_first):
+        scanner.start()
+
+    # 2 slots → exactly 1 notification (not 2)
+    assert notifier.send.call_count == 1
+    subject, message = notifier.send.call_args[0]
+    assert "2 new slots" in subject
+    assert "Mission" in message
+    assert "10:25" in message
+    assert "11:25" in message

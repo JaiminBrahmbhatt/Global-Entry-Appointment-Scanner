@@ -123,13 +123,18 @@ class Scanner:
             while True:
                 results = self.check_once()
                 has_error = any(r.error for r in results)
-                for result in results:
-                    for appt in result.new_appointments:
-                        msg = (
-                            f"New appointment on {appt.start.strftime('%Y-%m-%d %H:%M')} "
-                            f"in {result.city}"
-                        )
-                        self._notify_all("Global Entry Appointment Available", msg)
+                new_results = [r for r in results if r.new_appointments]
+                if new_results:
+                    total = sum(len(r.new_appointments) for r in new_results)
+                    subject = (
+                        f"Global Entry: {total} new slot{'s' if total != 1 else ''} available"
+                    )
+                    lines: list[str] = []
+                    for result in new_results:
+                        lines.append(f"{result.city}:")
+                        for appt in result.new_appointments:
+                            lines.append(f"  • {appt.start.strftime('%Y-%m-%d %H:%M')}")
+                    self._notify_all(subject, "\n".join(lines))
                 interval = self._error_interval if has_error else self._check_interval
                 logger.info("Next check in %d seconds.", interval)
                 time.sleep(interval)
