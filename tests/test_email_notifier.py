@@ -39,3 +39,18 @@ def test_send_connects_and_sends() -> None:
         mock_server.login.assert_called_once_with("from@example.com", "pass")
         mock_server.send_message.assert_called_once()
         mock_server.quit.assert_called_once()
+
+
+def test_send_uses_configured_smtp_host_and_port() -> None:
+    n = EmailNotifier(
+        from_email="from@example.com",
+        to_email="to@example.com",
+        password="pass",
+        smtp_host="smtp.office365.com",
+        smtp_port=587,
+    )
+    with patch("global_entry_scanner.notifications.email.smtplib.SMTP") as mock_smtp_cls:
+        mock_server = MagicMock()
+        mock_smtp_cls.return_value = mock_server
+        n.send("Subject", "Body")
+        mock_smtp_cls.assert_called_once_with("smtp.office365.com", 587)
