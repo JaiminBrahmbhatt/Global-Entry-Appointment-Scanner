@@ -40,6 +40,8 @@ class EmailConfig:
     from_email: str
     to_email: str
     password: str
+    smtp_host: str = "smtp.gmail.com"
+    smtp_port: int = 587
 
 
 @dataclass
@@ -98,7 +100,11 @@ def load_config(path: Path | None = None) -> Config:
     if "email" in notif_data:
         d = notif_data["email"]
         email = EmailConfig(
-            from_email=d["from_email"], to_email=d["to_email"], password=d["password"]
+            from_email=d["from_email"],
+            to_email=d["to_email"],
+            password=d["password"],
+            smtp_host=d.get("smtp_host", "smtp.gmail.com"),
+            smtp_port=int(d.get("smtp_port", 587)),
         )
     if "sms" in notif_data:
         d = notif_data["sms"]
@@ -156,6 +162,8 @@ def save_config(cfg: Config, path: Path | None = None) -> None:
             f'from_email = "{e.from_email}"',
             f'to_email = "{e.to_email}"',
             f'password = "{e.password}"',
+            f'smtp_host = "{e.smtp_host}"',
+            f"smtp_port = {e.smtp_port}",
             "",
         ]
     if cfg.notifications.console:
