@@ -11,7 +11,7 @@ logger = logging.getLogger(__name__)
 # Provider presets: name → (smtp_host, smtp_port, password_hint)
 # Used by the CLI setup wizard only.
 SMTP_PROVIDERS: Final[dict[str, tuple[str | None, int | None, str]]] = {
-    "Gmail": ("smtp.gmail.com", 587, "App password (required if 2-Step Verification is on)"),
+    "Gmail": ("smtp.gmail.com", 587, "App password (get one at https://support.google.com/accounts/answer/185833)"),
     "Outlook / Hotmail": ("smtp.office365.com", 587, "Password or app password"),
     "Yahoo Mail": ("smtp.mail.yahoo.com", 587, "App password (required)"),
     "iCloud Mail": ("smtp.mail.me.com", 587, "App-specific password"),
