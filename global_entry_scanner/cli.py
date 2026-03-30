@@ -99,10 +99,32 @@ def setup() -> None:
         slack_cfg = SlackConfig(webhook_url=url)
 
     if "email" in selected_channels:
+        from global_entry_scanner.notifications.email import SMTP_PROVIDERS
+
+        provider = questionary.select(
+            "Email provider:",
+            choices=list(SMTP_PROVIDERS.keys()),
+        ).ask()
+
+        preset_host, preset_port, password_hint = SMTP_PROVIDERS[provider]
+
+        if preset_host is None:
+            smtp_host = questionary.text("SMTP host (e.g. smtp.example.com):").ask()
+            smtp_port = int(questionary.text("SMTP port:", default="587").ask())
+        else:
+            smtp_host = preset_host
+            smtp_port = preset_port if preset_port is not None else 587
+
         from_email = questionary.text("From email address:").ask()
         to_email = questionary.text("To email address:").ask()
-        password = questionary.password("Gmail app password:").ask()
-        email_cfg = EmailConfig(from_email=from_email, to_email=to_email, password=password)
+        password = questionary.password(f"{password_hint}:").ask()
+        email_cfg = EmailConfig(
+            from_email=from_email,
+            to_email=to_email,
+            password=password,
+            smtp_host=smtp_host,
+            smtp_port=smtp_port,
+        )
 
     if "sms" in selected_channels:
         account_sid = questionary.text("Twilio Account SID:").ask()
@@ -192,6 +214,8 @@ def scan(location_names: str | None, notify_channels: str | None) -> None:
                 from_email=email_cfg.from_email,
                 to_email=email_cfg.to_email,
                 password=email_cfg.password,
+                smtp_host=email_cfg.smtp_host,
+                smtp_port=email_cfg.smtp_port,
             )
         )
     if cfg.notifications.sms and "sms" in active_channels:
