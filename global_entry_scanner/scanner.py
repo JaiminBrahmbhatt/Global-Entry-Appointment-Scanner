@@ -124,6 +124,8 @@ class Scanner:
                 results = self.check_once()
                 has_error = any(r.error for r in results)
                 new_results = [r for r in results if r.new_appointments]
+                if not new_results and not has_error:
+                    logger.info("No new appointments found.")
                 if new_results:
                     total = sum(len(r.new_appointments) for r in new_results)
                     subject = (

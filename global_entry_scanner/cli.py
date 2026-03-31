@@ -101,6 +101,10 @@ def setup() -> None:
     if "email" in selected_channels:
         from global_entry_scanner.notifications.email import SMTP_PROVIDERS
 
+        click.echo(
+            "Supported providers: Gmail, Outlook/Hotmail, Yahoo, iCloud, Zoho, or custom SMTP.\n"
+            "Note: Most providers require an app-specific password, not your regular password."
+        )
         provider = questionary.select(
             "Email provider:",
             choices=list(SMTP_PROVIDERS.keys()),
@@ -115,6 +119,7 @@ def setup() -> None:
             smtp_host = preset_host
             smtp_port = preset_port if preset_port is not None else 587
 
+        click.echo("Tip: You can use the same email address for both 'from' and 'to'.")
         from_email = questionary.text("From email address:").ask()
         to_email = questionary.text("To email address:").ask()
         password = questionary.password(f"{password_hint}:").ask()
@@ -129,8 +134,8 @@ def setup() -> None:
     if "sms" in selected_channels:
         account_sid = questionary.text("Twilio Account SID:").ask()
         auth_token = questionary.password("Twilio Auth Token:").ask()
-        to_number = questionary.text("To phone number (e.g. +12125551234):").ask()
         from_number = questionary.text("From Twilio number (e.g. +12125550000):").ask()
+        to_number = questionary.text("To phone number (e.g. +12125551234):").ask()
         sms_cfg = SMSConfig(
             account_sid=account_sid,
             auth_token=auth_token,
