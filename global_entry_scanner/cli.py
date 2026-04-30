@@ -132,7 +132,11 @@ def setup() -> None:
 
         if preset_host is None:
             smtp_host = _ask_required("SMTP host (e.g. smtp.example.com):")
-            smtp_port = int(questionary.text("SMTP port:", default="587").ask())
+            smtp_port_str = questionary.text("SMTP port:", default="587").ask()
+            if smtp_port_str is None:
+                console.print("[yellow]Aborted.[/yellow]")
+                raise SystemExit(1)
+            smtp_port = int(smtp_port_str)
         else:
             smtp_host = preset_host
             smtp_port = preset_port if preset_port is not None else 587
@@ -320,7 +324,7 @@ def scan(location_names: str | None, notify_channels: str | None) -> None:
                     )
                     time.sleep(1)
         except KeyboardInterrupt:
-            pass
+            live.update(make_scan_renderable(results, events, last_check, 0, False))
 
     console.print("[bold green]Scanner stopped.[/bold green]")
 
