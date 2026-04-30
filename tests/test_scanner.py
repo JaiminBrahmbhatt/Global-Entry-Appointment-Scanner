@@ -103,7 +103,7 @@ def test_notify_all_calls_every_notifier() -> None:
     scanner = Scanner(location_ids=[5001])
     scanner.add_notifier(n1)
     scanner.add_notifier(n2)
-    scanner._notify_all("subject", "message")
+    scanner.notify_all("subject", "message")
     n1.send.assert_called_once_with("subject", "message")
     n2.send.assert_called_once_with("subject", "message")
 
@@ -115,7 +115,7 @@ def test_notify_all_continues_when_one_notifier_fails() -> None:
     scanner = Scanner(location_ids=[5001])
     scanner.add_notifier(n1)
     scanner.add_notifier(n2)
-    scanner._notify_all("subject", "message")
+    scanner.notify_all("subject", "message")
     n2.send.assert_called_once_with("subject", "message")
 
 
@@ -149,3 +149,23 @@ def test_start_batches_all_slots_into_one_notification() -> None:
     assert "Mission" in message
     assert "10:25" in message
     assert "11:25" in message
+
+
+def test_validate_notifiers_raises_on_invalid_notifier() -> None:
+    import pytest
+
+    bad: MagicMock = MagicMock(spec=Notifier)
+    bad.validate.side_effect = ValueError("missing webhook_url")
+    scanner = Scanner(location_ids=[5001])
+    scanner.add_notifier(bad)
+
+    with pytest.raises(ValueError, match="missing webhook_url"):
+        scanner.validate_notifiers()
+
+
+def test_validate_notifiers_passes_when_all_valid() -> None:
+    good: MagicMock = MagicMock(spec=Notifier)
+    scanner = Scanner(location_ids=[5001])
+    scanner.add_notifier(good)
+    scanner.validate_notifiers()  # should not raise
+    good.validate.assert_called_once()
