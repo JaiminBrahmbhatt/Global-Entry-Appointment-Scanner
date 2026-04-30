@@ -41,3 +41,33 @@ def test_print_locations_table_contains_location_data() -> None:
     assert "TX" in output
     assert "Chicago" in output
     assert "IL" in output
+
+
+def test_print_step_panel_marks_completed_steps() -> None:
+    from global_entry_scanner.display import print_step_panel
+
+    test_con = _test_console()
+    with mock.patch("global_entry_scanner.display.console", test_con):
+        print_step_panel(current=3)
+
+    output = test_con.file.getvalue()  # type: ignore[union-attr]
+    assert "Select Locations" in output
+    assert "Notification Channels" in output
+    assert "Configure Channels" in output
+    assert "Confirm & Save" in output
+
+
+def test_print_summary_panel_shows_locations_and_channels() -> None:
+    from global_entry_scanner.display import print_summary_panel
+
+    test_con = _test_console()
+    with mock.patch("global_entry_scanner.display.console", test_con):
+        print_summary_panel(
+            locations=["San Francisco, CA", "Los Angeles, CA"],
+            channels=["email", "discord"],
+        )
+
+    output = test_con.file.getvalue()  # type: ignore[union-attr]
+    assert "San Francisco, CA" in output
+    assert "email" in output
+    assert "discord" in output
