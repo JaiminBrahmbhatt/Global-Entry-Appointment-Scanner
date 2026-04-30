@@ -66,7 +66,7 @@ global_entry_scanner/
 
 **`Scanner._get()`** retries up to 3 times with exponential backoff on 5xx/network errors. It raises immediately on 4xx. `fetch_appointments` only catches 404 (returns `[]`); all other errors propagate to `check_once` which records them in `ScanResult.error`.
 
-**Concurrent notifications** — `_notify_all()` uses `ThreadPoolExecutor`. Failures are logged per-channel and never re-raised.
+**Concurrent notifications** — `notify_all()` uses `ThreadPoolExecutor`. Failures are logged per-channel and never re-raised.
 
 ### Config
 

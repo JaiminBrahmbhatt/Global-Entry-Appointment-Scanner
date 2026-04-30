@@ -43,6 +43,11 @@ class Scanner:
     def add_notifier(self, notifier: Notifier) -> None:
         self._notifiers.append(notifier)
 
+    def validate_notifiers(self) -> None:
+        """Validate all registered notifiers. Raises ValueError if any are misconfigured."""
+        for notifier in self._notifiers:
+            notifier.validate()
+
     # ------------------------------------------------------------------ #
     # API fetching                                                         #
     # ------------------------------------------------------------------ #
@@ -115,8 +120,7 @@ class Scanner:
 
     def start(self) -> None:
         """Start the blocking poll loop. Validates all notifiers first. Ctrl+C to stop."""
-        for notifier in self._notifiers:
-            notifier.validate()
+        self.validate_notifiers()
 
         logger.info("Starting scanner for %d location(s)...", len(self._location_ids))
         try:
@@ -136,7 +140,7 @@ class Scanner:
                         lines.append(f"{result.city}:")
                         for appt in result.new_appointments:
                             lines.append(f"  • {appt.start.strftime('%Y-%m-%d %H:%M')}")
-                    self._notify_all(subject, "\n".join(lines))
+                    self.notify_all(subject, "\n".join(lines))
                 interval = self._error_interval if has_error else self._check_interval
                 logger.info("Next check in %d seconds.", interval)
                 time.sleep(interval)
@@ -166,7 +170,7 @@ class Scanner:
     # Notifications                                                        #
     # ------------------------------------------------------------------ #
 
-    def _notify_all(self, subject: str, message: str) -> None:
+    def notify_all(self, subject: str, message: str) -> None:
         """Fire all notifiers concurrently. Logs failures but does not raise."""
         with ThreadPoolExecutor() as executor:
             futures = {

@@ -3,8 +3,8 @@ Output docs/demo.gif
 
 Set Shell "zsh"
 Set FontSize 15
-Set Width 900
-Set Height 480
+Set Width 1000
+Set Height 560
 Set Theme "Dracula"
 Set Padding 24
 Set TypingSpeed 60ms
@@ -23,32 +23,42 @@ Enter
 Sleep 300ms
 Show
 
-# Step 1: Run setup
-Type "global-entry-scanner setup"
+# Step 1: List locations (Rich table)
+Type "global-entry-scanner locations"
 Enter
-Sleep 4s
-
-# Select the first city in the list with Space, confirm with Enter
-Space
-Sleep 800ms
-Enter
-Sleep 1200ms
-
-# Skip notification channels — defaults to console
-Enter
-Sleep 1200ms
-
-# Let the "Config saved" message sit for a moment
-Sleep 800ms
+Sleep 5s
 Type "clear"
 Enter
 Sleep 400ms
 
-# Step 2: Run scan
+# Step 2: Run setup — step panels appear at each stage
+Type "global-entry-scanner setup"
+Enter
+Sleep 5s
+
+# Select the first city in the list with Space, confirm with Enter
+Space
+Sleep 600ms
+Enter
+Sleep 1500ms
+
+# Step 2 panel: notification channels — accept default (console)
+Enter
+Sleep 1500ms
+
+# Step 3 panel (no channel config needed for console)
+# Step 4 panel + summary appear automatically
+# Let the "Config saved" message sit for a moment
+Sleep 1500ms
+Type "clear"
+Enter
+Sleep 400ms
+
+# Step 3: Run scan — Rich Live dashboard
 Type "global-entry-scanner scan"
 Enter
-Sleep 7s
+Sleep 9s
 
 # Stop cleanly
 Ctrl+C
-Sleep 1s
+Sleep 1.5s
