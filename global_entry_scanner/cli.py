@@ -55,11 +55,15 @@ def locations() -> None:
 @cli.command()
 def setup() -> None:
     """Interactive setup wizard. Saves config to ~/.config/global-entry-scanner/config.toml"""
-    click.echo("Fetching available locations...")
+    from global_entry_scanner.display import console, print_step_panel, print_summary_panel
+
+    # Step 1: Select Locations
+    print_step_panel(1)
+    console.print("Fetching available locations...")
     scanner = Scanner(location_ids=[])
     all_locs = scanner.fetch_locations()
     if not all_locs:
-        click.echo("Could not fetch locations. Check your network connection.")
+        console.print("[red]Could not fetch locations. Check your network connection.[/red]")
         raise SystemExit(1)
 
     choices = [
@@ -74,9 +78,11 @@ def setup() -> None:
     ).ask()
 
     if not selected_ids:
-        click.echo("No locations selected. Exiting.")
+        console.print("[red]No locations selected. Exiting.[/red]")
         raise SystemExit(1)
 
+    # Step 2: Notification Channels
+    print_step_panel(2)
     channel_choices = ["console", "email", "discord", "slack", "sms"]
     selected_channels: list[str] = questionary.checkbox(
         "Which notification channels do you want to enable? (console is enabled by default)",
@@ -86,17 +92,27 @@ def setup() -> None:
     if not selected_channels:
         selected_channels = ["console"]
 
+    # Step 3: Configure Each Channel
+    print_step_panel(3)
     discord_cfg: DiscordConfig | None = None
     slack_cfg: SlackConfig | None = None
     email_cfg: EmailConfig | None = None
     sms_cfg: SMSConfig | None = None
 
+    def _ask_required(prompt: str, password: bool = False) -> str:
+        """Prompt until the user enters a non-empty value."""
+        while True:
+            answer = (questionary.password(prompt) if password else questionary.text(prompt)).ask()
+            if answer:
+                return str(answer)
+            console.print("[red]This field is required.[/red]")
+
     if "discord" in selected_channels:
-        url = questionary.text("Discord webhook URL:").ask()
+        url = _ask_required("Discord webhook URL:")
         discord_cfg = DiscordConfig(webhook_url=url)
 
     if "slack" in selected_channels:
-        url = questionary.text("Slack webhook URL:").ask()
+        url = _ask_required("Slack webhook URL:")
         slack_cfg = SlackConfig(webhook_url=url)
 
     if "email" in selected_channels:
@@ -110,15 +126,15 @@ def setup() -> None:
         preset_host, preset_port, password_hint = SMTP_PROVIDERS[provider]
 
         if preset_host is None:
-            smtp_host = questionary.text("SMTP host (e.g. smtp.example.com):").ask()
+            smtp_host = _ask_required("SMTP host (e.g. smtp.example.com):")
             smtp_port = int(questionary.text("SMTP port:", default="587").ask())
         else:
             smtp_host = preset_host
             smtp_port = preset_port if preset_port is not None else 587
 
-        from_email = questionary.text("From email address:").ask()
-        to_email = questionary.text("To email address:").ask()
-        password = questionary.password(f"{password_hint}:").ask()
+        from_email = _ask_required("From email address:")
+        to_email = _ask_required("To email address:")
+        password = _ask_required(f"{password_hint}:", password=True)
         email_cfg = EmailConfig(
             from_email=from_email,
             to_email=to_email,
@@ -128,16 +144,25 @@ def setup() -> None:
         )
 
     if "sms" in selected_channels:
-        account_sid = questionary.text("Twilio Account SID:").ask()
-        auth_token = questionary.password("Twilio Auth Token:").ask()
-        to_number = questionary.text("To phone number (e.g. +12125551234):").ask()
-        from_number = questionary.text("From Twilio number (e.g. +12125550000):").ask()
+        account_sid = _ask_required("Twilio Account SID:")
+        auth_token = _ask_required("Twilio Auth Token:", password=True)
+        to_number = _ask_required("To phone number (e.g. +12125551234):")
+        from_number = _ask_required("From Twilio number (e.g. +12125550000):")
         sms_cfg = SMSConfig(
             account_sid=account_sid,
             auth_token=auth_token,
             to_number=to_number,
             from_number=from_number,
         )
+
+    # Step 4: Confirm & Save
+    print_step_panel(4)
+    location_names = [
+        f"{all_locs[i].city}, {all_locs[i].state}"
+        for i in selected_ids
+        if i in all_locs
+    ]
+    print_summary_panel(location_names, selected_channels)
 
     cfg = Config(
         locations=LocationsConfig(ids=selected_ids),
@@ -151,7 +176,7 @@ def setup() -> None:
         ),
     )
     save_config(cfg, _config_path())
-    click.echo(f"Config saved to {_config_path()}")
+    console.print(f"[bold green]✓ Config saved to {_config_path()}[/bold green]")
 
 
 @cli.command()
