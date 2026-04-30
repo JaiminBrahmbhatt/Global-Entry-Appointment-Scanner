@@ -1,14 +1,10 @@
 from __future__ import annotations
 
-from datetime import datetime  # noqa: F401
-
 from rich import box
-from rich.console import Console, Group  # noqa: F401
-from rich.panel import Panel  # noqa: F401
+from rich.console import Console
 from rich.table import Table
-from rich.text import Text  # noqa: F401
 
-from global_entry_scanner.models import Location, ScanResult  # noqa: F401
+from global_entry_scanner.models import Location
 
 console = Console()
 
