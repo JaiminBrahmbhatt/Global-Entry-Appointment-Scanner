@@ -120,8 +120,7 @@ class Scanner:
 
     def start(self) -> None:
         """Start the blocking poll loop. Validates all notifiers first. Ctrl+C to stop."""
-        for notifier in self._notifiers:
-            notifier.validate()
+        self.validate_notifiers()
 
         logger.info("Starting scanner for %d location(s)...", len(self._location_ids))
         try:

@@ -1,5 +1,6 @@
 from unittest.mock import MagicMock
 
+import pytest
 import responses as resp
 
 from global_entry_scanner.models import Appointment, Location
@@ -152,8 +153,6 @@ def test_start_batches_all_slots_into_one_notification() -> None:
 
 
 def test_validate_notifiers_raises_on_invalid_notifier() -> None:
-    import pytest
-
     bad: MagicMock = MagicMock(spec=Notifier)
     bad.validate.side_effect = ValueError("missing webhook_url")
     scanner = Scanner(location_ids=[5001])
