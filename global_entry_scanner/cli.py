@@ -42,13 +42,14 @@ def cli() -> None:
 @cli.command()
 def locations() -> None:
     """List all available Global Entry enrollment locations."""
+    from global_entry_scanner.display import console, print_locations_table
+
     scanner = Scanner(location_ids=[])
     locs = scanner.fetch_locations()
     if not locs:
-        click.echo("Failed to fetch locations.")
+        console.print("[red]Failed to fetch locations.[/red]")
         raise SystemExit(1)
-    for loc in sorted(locs.values(), key=lambda x: (x.state, x.city)):
-        click.echo(f"  {loc.id:>6}  {loc.city}, {loc.state}  ({loc.name})")
+    print_locations_table(locs)
 
 
 @cli.command()
