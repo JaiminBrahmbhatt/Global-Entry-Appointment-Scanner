@@ -1,11 +1,12 @@
 from __future__ import annotations
 
+from datetime import datetime
 from io import StringIO
 from unittest import mock
 
 from rich.console import Console
 
-from global_entry_scanner.models import Location
+from global_entry_scanner.models import Location, ScanResult
 
 
 def _test_console() -> Console:
@@ -75,3 +76,46 @@ def test_print_summary_panel_shows_locations_and_channels() -> None:
     assert "Los Angeles, CA" in output
     assert "email" in output
     assert "discord" in output
+
+
+def test_make_scan_renderable_shows_location_and_status() -> None:
+    from global_entry_scanner.display import make_scan_renderable
+
+    results = [
+        ScanResult(location_id=5001, city="Mission", new_appointments=[], error=None),
+    ]
+    renderable = make_scan_renderable(
+        results=results,
+        events=["14:32:01  Scan OK — no new slots"],
+        last_check=datetime(2026, 4, 29, 14, 32, 0),
+        next_check_in=840,
+        active=True,
+    )
+    buf = StringIO()
+    Console(file=buf, no_color=True, width=200).print(renderable)
+    output = buf.getvalue()
+    assert "Mission" in output
+    assert "OK" in output
+    assert "14:32:01" in output
+
+
+def test_make_scan_renderable_shows_error_status() -> None:
+    from global_entry_scanner.display import make_scan_renderable
+
+    results = [
+        ScanResult(
+            location_id=5001, city="Mission", new_appointments=[], error="Connection refused"
+        ),
+    ]
+    renderable = make_scan_renderable(
+        results=results,
+        events=[],
+        last_check=None,
+        next_check_in=0,
+        active=True,
+    )
+    buf = StringIO()
+    Console(file=buf, no_color=True, width=200).print(renderable)
+    output = buf.getvalue()
+    assert "Connection refused" in output
+    assert "Mission" in output
