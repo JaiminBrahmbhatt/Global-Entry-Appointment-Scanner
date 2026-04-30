@@ -84,7 +84,7 @@ def make_scan_renderable(
     status_str = "[bold green]Running ●[/bold green]" if active else "[bold red]Stopped[/bold red]"
 
     if last_check is not None:
-        elapsed = int((datetime.now() - last_check).total_seconds())
+        elapsed = max(0, int((datetime.now() - last_check).total_seconds()))
         mins, secs = divmod(next_check_in, 60)
         header_str = f"Last check: {elapsed}s ago  |  Next check in: {mins}m {secs:02d}s"
     else:
