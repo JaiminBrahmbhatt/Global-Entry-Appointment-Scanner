@@ -103,6 +103,9 @@ def setup() -> None:
         """Prompt until the user enters a non-empty value."""
         while True:
             answer = (questionary.password(prompt) if password else questionary.text(prompt)).ask()
+            if answer is None:
+                console.print("[yellow]Aborted.[/yellow]")
+                raise SystemExit(1)
             if answer:
                 return str(answer)
             console.print("[red]This field is required.[/red]")
