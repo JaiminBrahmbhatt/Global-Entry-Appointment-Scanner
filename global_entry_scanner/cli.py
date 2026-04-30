@@ -200,6 +200,7 @@ def setup() -> None:
 def scan(location_names: str | None, notify_channels: str | None) -> None:
     """Run the appointment scanner using saved config."""
     from rich.live import Live
+    from rich.panel import Panel
 
     from global_entry_scanner.display import console, make_scan_renderable
     from global_entry_scanner.models import ScanResult
@@ -268,7 +269,6 @@ def scan(location_names: str | None, notify_channels: str | None) -> None:
     try:
         scanner.validate_notifiers()
     except ValueError as e:
-        from rich.panel import Panel
         console.print(Panel(f"[red]{e}[/red]", title="[red]Configuration Error[/red]"))
         raise SystemExit(1)
 
