@@ -2,6 +2,8 @@ from __future__ import annotations
 
 import logging
 import os
+import time
+from datetime import datetime
 from pathlib import Path
 
 import click
@@ -197,10 +199,15 @@ def setup() -> None:
 )
 def scan(location_names: str | None, notify_channels: str | None) -> None:
     """Run the appointment scanner using saved config."""
+    from rich.live import Live
+
+    from global_entry_scanner.display import console, make_scan_renderable
+    from global_entry_scanner.models import ScanResult
+
     try:
         cfg = load_config(_config_path())
     except FileNotFoundError as e:
-        click.echo(str(e))
+        console.print(f"[red]{e}[/red]")
         raise SystemExit(1)
 
     location_ids = cfg.locations.ids
@@ -214,7 +221,7 @@ def scan(location_names: str | None, notify_channels: str | None) -> None:
             if name.strip().lower() in by_city
         ]
         if not location_ids:
-            click.echo("No matching locations found.")
+            console.print("[red]No matching locations found.[/red]")
             raise SystemExit(1)
 
     scanner = Scanner(
@@ -258,7 +265,64 @@ def scan(location_names: str | None, notify_channels: str | None) -> None:
             )
         )
 
-    scanner.start()
+    try:
+        scanner.validate_notifiers()
+    except ValueError as e:
+        from rich.panel import Panel
+        console.print(Panel(f"[red]{e}[/red]", title="[red]Configuration Error[/red]"))
+        raise SystemExit(1)
+
+    results: list[ScanResult] = []
+    events: list[str] = []
+    last_check: datetime | None = None
+    check_interval = cfg.scanner.check_interval
+    error_interval = cfg.scanner.error_interval
+
+    with Live(
+        make_scan_renderable(results, events, last_check, 0, True),
+        refresh_per_second=4,
+        console=console,
+    ) as live:
+        try:
+            while True:
+                results = scanner.check_once()
+                last_check = datetime.now()
+
+                has_error = any(r.error for r in results)
+                new_results = [r for r in results if r.new_appointments]
+
+                if new_results:
+                    total = sum(len(r.new_appointments) for r in new_results)
+                    subject = (
+                        f"Global Entry: {total} new slot{'s' if total != 1 else ''} available"
+                    )
+                    message_lines: list[str] = []
+                    for r in new_results:
+                        message_lines.append(f"{r.city}:")
+                        for appt in r.new_appointments:
+                            message_lines.append(f"  • {appt.start.strftime('%Y-%m-%d %H:%M')}")
+                        events.append(
+                            f"{datetime.now().strftime('%H:%M:%S')}  "
+                            f"{len(r.new_appointments)} new slot(s) at {r.city}"
+                        )
+                    scanner.notify_all(subject, "\n".join(message_lines))
+                else:
+                    events.append(
+                        f"{datetime.now().strftime('%H:%M:%S')}  Scan OK — no new slots"
+                    )
+
+                events = events[-10:]
+                interval = error_interval if has_error else check_interval
+
+                for remaining in range(interval, 0, -1):
+                    live.update(
+                        make_scan_renderable(results, events, last_check, remaining, True)
+                    )
+                    time.sleep(1)
+        except KeyboardInterrupt:
+            pass
+
+    console.print("[bold green]Scanner stopped.[/bold green]")
 
 
 @cli.command("mcp")
