@@ -55,6 +55,9 @@ def test_print_step_panel_marks_completed_steps() -> None:
     assert "Notification Channels" in output
     assert "Configure Channels" in output
     assert "Confirm & Save" in output
+    assert "✓" in output  # completed steps marker
+    assert "●" in output  # current step marker
+    assert "○" in output  # upcoming step marker
 
 
 def test_print_summary_panel_shows_locations_and_channels() -> None:
@@ -69,5 +72,6 @@ def test_print_summary_panel_shows_locations_and_channels() -> None:
 
     output = test_con.file.getvalue()  # type: ignore[union-attr]
     assert "San Francisco, CA" in output
+    assert "Los Angeles, CA" in output
     assert "email" in output
     assert "discord" in output
